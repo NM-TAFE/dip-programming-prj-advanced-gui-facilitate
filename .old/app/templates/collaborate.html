@@ -1,0 +1,20 @@
+{% extends "new-base.html" %}
+{% set title = "Collaborate" %}
+{% block content %}
+<div class="m-8 flex items-center">
+    <div class="flex flex-col gap-8 w-1/2 mx-auto">
+        <h2 class="text-6xl font-bold text-center text-transparent bg-clip-text
+            bg-gradient-to-tr from-indigo-500 via-fuchsia-400 to-purple-400"><i class="fa-solid fa-user-group mr-4"></i>OcrRoo
+            Collaborate</h2>
+        <p class="text-center text-lg text-gray-500">Join or create an OcrRoo Collaborate session to
+            exchange code captures with another user. With OcrRoo Collaborate,
+            you can invite someone to monitor, review, annotate, and assist with your code.</p>
+        <div class="flex w-full gap-8">
+            <a class="bg-blue-200/50 w-1/2 py-6 rounded-xl shadow-lg text-2xl text-center"
+               href="/collaborate/create"><i class="fa-solid fa-tower-cell mr-2"></i>Create Session</a>
+            <a class="bg-green-200/50 w-1/2 py-6 rounded-xl shadow-lg text-2xl text-center" href=""><i
+                    class="fa-solid fa-link mr-2"></i>Join Session</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

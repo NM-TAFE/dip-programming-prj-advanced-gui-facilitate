@@ -1,0 +1,39 @@
+{% extends "new-base.html" %}
+{% set title = "Upload" %}
+{% block content %}
+<section class="m-8">
+    <form action="/upload_video" method="post" enctype="multipart/form-data" class="flex flex-col w-1/3 mx-auto">
+        <h2 class="text-6xl pb-4 font-bold text-center text-transparent bg-clip-text
+            bg-gradient-to-tr from-indigo-500 via-fuchsia-400 to-purple-400">
+            <i class="fa-solid fa-upload mr-4"></i>Upload a Video
+        </h2>
+        <hr class="my-2">
+        <label class="mb-4" for="localFileInput"><i class="fa-solid fa-upload mr-1"></i>Upload
+            from Device</label>
+        <input id="localFileInput" name="localFileInput" type="file"
+               aria-label="Choose a video file to upload" aria-describedby="uploadInstructions">
+
+        {% if use_youtube_downloader %}
+        <p class="mt-1">or</p>
+        <label class="mb-1" for="youtubeInput"><i
+                class="fa-brands fa-youtube text-red-500 mr-1"></i>
+            Upload from YouTube</label>
+        <input id="youtubeInput" name="youtubeInput"
+               class="mt-1 p-1 w-full rounded-md border-gray-200 border shadow-sm" type="text"
+               placeholder="Enter YouTube URL e.g. https://www.youtube.com/watch?v=KOdfpbnWLVo">
+        {% endif %}
+        <hr class="mt-4 mb-2">
+        <label class="mb-1" for="videoTitle">Video Title (Optional)</label>
+        <input id="videoTitle" name="videoTitle"
+               class="mt-1 p-1 w-full rounded-md border-gray-200 border shadow-sm" type="text"
+               placeholder="Enter Video Title e.g. Socratica - Hello World in Python">
+        <hr class="mt-4">
+        <button type="submit" class="bg-gradient-to-r from-indigo-400 to-purple-400 text-white font-bold py-1
+        mt-4 shadow-sm rounded-xl hover:scale-[1.02] hover:underline transition"
+                aria-label="Upload Video & Start Coding">Upload Video & Start Coding
+        </button>
+    </form>
+    <p id="uploadInstructions" class="hidden" aria-hidden="true">Choose a video file to upload. Supported file formats
+        include MP4, AVI, and MKV.</p>
+</section>
+{% endblock %}
