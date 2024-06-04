@@ -123,3 +123,44 @@ Mark all that applied this week
 - I've downloaded some models of Ollama and tested them on my PC.
 
 
+
+
+## <28/May>
+#### Summary
+> What work did you do this week
+- Considered converting the Flask app to a desktop app instead.
+- Searching and testing new LLM (Ollama, Llama 3, 4.7Gb model) to try to replace existing openAI then checking CPU usage and its response speed.
+- Considered what issues I can indentify for CertIV students to contribute. 
+>What work you are planning to do next week
+- Finding out any ways to improve performance in CPU usage and response time.
+- Searching for how to apply multiple OCRs to identify code frame and add timestamps, and with other OCR to extract and convert text to code.
+
+> Any blockers
+- Unexpected slow response speed of Llama 3 model and fairly high CPU usage
+- Recognition accuracy of detecting differences in code 
+
+
+
+
+#### Issues and PRs
+> N/A
+
+#### Evidence
+Mark all that applied this week
+- [V] Attended class
+- [] Responded to PRs/Issues
+- [V] Met with the team online. Forum Microsoft Teams
+- [] Commits to group repo
+
+> warning: If you were not able to mark any of these on a particular week, please email your lecturer with the reason.
+
+#### Retrospective
+
+> In what ways have your thoughts about the design changed this week and why?
+- Personally think that using various of Ollama models could be more beneficial in pricing and performance rather than training our own LLM or relying on GPT 3.5.   
+> Did you discuss these ideas with the group? What was the outcome?
+- I need more time to test more models and to see if it can be more useful and replaceable in actual use.     
+> How did you validate your progress this week?
+- I've downloaded some models of Ollama and tested them on my PC.
+
+
