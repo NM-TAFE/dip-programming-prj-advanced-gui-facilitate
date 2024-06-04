@@ -40,7 +40,7 @@ class VideoPlayerFrame(wx.Frame):
             elif keycode == ord('O'):  # Open file dialog
                 # todo put into its own function
                 open_dialog = wx.FileDialog(self, "Open", "", "", "Video files (*.mp4)|*.mp4",
-                                               wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+                                            wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
                 if open_dialog.ShowModal() == wx.ID_CANCEL:
                     return
                 file_path = open_dialog.GetPath()
@@ -65,20 +65,72 @@ class VideoPlayer(wx.Panel):
 
         # Create timeline.
         # todo create custom timeline class with ability to highlight segments with code
-        self.timeline = wx.Slider(self)
+        self.timeline = HighlightTimeline(self)
+
+        # Create a timer to update the timeline
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.update_timeline, self.timer)
+        self.timer.Start(100)  # Update every 100 milliseconds (0.1 second)
 
         # Layout.
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.media, 2, wx.EXPAND)
-        sizer.Add(self.timeline, 0, wx.EXPAND | wx.ALL, border=2)
+        sizer.Add(self.timeline, 0, wx.EXPAND | wx.ALL, border=5)
         self.SetSizer(sizer)
-
 
     def play_video(self):
         if self.media.GetState() == wx.media.MEDIASTATE_PLAYING:
             self.media.Pause()
         else:
             self.media.Play()
+
+    def update_timeline(self, event):
+        # Update the slider position to match the current video play time
+        if self.media.Length() > 0:
+            current_time = self.media.Tell() / 1000  # Convert milliseconds to seconds
+            total_time = self.media.Length() / 1000  # Total duration in seconds
+            if total_time > 0:
+                self.timeline.set_thumb_position(current_time / total_time)
+
+
+class HighlightTimeline(wx.Panel):
+    def __init__(self, parent):
+        super().__init__(parent, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TAB_TRAVERSAL)
+        self.highlights = []  # Highlight ranges
+        self.thumb_position = 0.0  # Float position (0.0 to 1.0)
+        self.Bind(wx.EVT_PAINT, self.on_paint)
+
+    def add_highlight_range(self, start: float, end: float):
+        self.highlights.append((start, end))
+        self.Refresh()
+
+    def set_thumb_position(self, value):
+        self.thumb_position = value
+        self.Refresh()
+
+    def on_paint(self, event):
+        dc = wx.BufferedPaintDC(self)
+        gc = wx.GraphicsContext.Create(dc)
+        width, height = self.GetClientSize()
+
+        # Draw the background of the timeline.
+        gc.SetPen(wx.Pen(wx.BLACK, 1))
+        gc.SetBrush(wx.Brush(wx.WHITE))
+        gc.DrawRectangle(0, height // 2 - 5, width, 10)
+
+        # Draw the highlighted ranges.
+        for start, end in self.highlights:
+            gc.SetPen(wx.Pen(wx.BLUE, 1))
+            gc.SetBrush(wx.Brush(wx.BLUE))
+            start_pos = width * start
+            end_pos = width * end
+            gc.DrawRectangle(start_pos, height // 2 - 5, end_pos - start_pos, 10)
+
+        # Draw the thumb at the new position.
+        thumb_pos = width * self.thumb_position
+        gc.SetPen(wx.Pen(wx.BLACK, 1))
+        gc.SetBrush(wx.Brush(wx.GREEN))
+        gc.DrawRectangle(thumb_pos - 5, height // 2 - 5, 10, 10)
 
 
 class TextPanel(wx.Panel):
