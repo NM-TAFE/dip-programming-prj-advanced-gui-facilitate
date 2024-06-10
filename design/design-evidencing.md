@@ -32,27 +32,14 @@ A persona is a fictional character that represents a user. It is a way to descri
 
 Pick the most representative persona from your group. Write a brief (2-3 sentence) justification for why you chose this persona.
 
-### Persona Template
-
-This is an optional template for how to structure your persona:
-
-```markdown
-# Persona: [Persona Name]
-
-## Background
-Give the person's background - make sure we can understand their level of skills, knowledge, and experience.
-
-## Goals
-Why does this person use the application? What are they trying to achieve?
-
-## Needs
-What does this person need from the application? What are their pain points?
-
-```
+### Chosen persona
+[Steve](persona.md)
 
 ### Relevant issue
 >
-> Link to an issue that covers a pain point relevant to the persona and explain why it is relevant.
+> 1. [Create Media Player with Timestamps #10](https://github.com/NM-TAFE/dip-programming-prj-advanced-gui-facilitate/issues/10)
+> 2. [Media Player Timestamp Alert #36](https://github.com/NM-TAFE/dip-programming-prj-advanced-gui-facilitate/issues/36)
+> 3. [Block out UI #4](https://github.com/NM-TAFE/dip-programming-prj-advanced-gui-facilitate/issues/4)
 >
 
 ### Validation
