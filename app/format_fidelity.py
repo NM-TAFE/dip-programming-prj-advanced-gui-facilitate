@@ -1,7 +1,7 @@
 import openai
 import logging
 
-# api_key = 'sk-proj-su2RLa8r7VWi1CBSlyQ9T3BlbkFJCmRhVkjPSSyv37sjr8xY'
+# api_key = 'sk-proj-qOjAq0mmuC7MlSttlG6mT3BlbkFJonYVDHJQgo3OiMUDHi7d'
 
 
 class CodeFormatter:

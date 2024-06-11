@@ -127,20 +127,6 @@ Mark all that applied this week
 ## <28/May>
 #### Summary
 > What work did you do this week
-<<<<<<< HEAD
-- Considered converting the Flask app to a desktop app instead.
-- Searching and testing new LLM (Ollama, Llama 3, 4.7Gb model) to try to replace existing openAI then checking CPU usage and its response speed.
-- Considered what issues I can indentify for CertIV students to contribute. 
->What work you are planning to do next week
-- Finding out any ways to improve performance in CPU usage and response time.
-- Searching for how to apply multiple OCRs to identify code frame and add timestamps, and with other OCR to extract and convert text to code.
-
-> Any blockers
-- Unexpected slow response speed of Llama 3 model and fairly high CPU usage
-- Recognition accuracy of detecting differences in code 
-
-
-=======
 - trying to get my head around about the idea of text searching algorithm that newly came up this week
 - Also, looked through and figured out the whole process of the project again, including how we suppose to pre-process a video, what fast ocr do, what slow ocr do, what LLM we going to use, and how we compile the script onto the screen. 
 > What work you are planning to do next week
@@ -150,7 +136,6 @@ Mark all that applied this week
 - Imperfection of binary search for adding timestamps (how to sort beforehand, how to find next mid-point)
 - Defining the length of timeframe to shift right or left(every second or milli-second?)
 - Defining the difference in comparison with every frame when if there is constant text in the screen (ie. IDE Ui)
->>>>>>> 439bccc9972037941b9e572fe1ef5c988421522f
 
 
 #### Issues and PRs
@@ -161,24 +146,13 @@ Mark all that applied this week
 - [V] Attended class
 - [] Responded to PRs/Issues
 - [V] Met with the team online. Forum Microsoft Teams
-<<<<<<< HEAD
 - [] Commits to group repo
-=======
-- [V] Commits to group repo
->>>>>>> 439bccc9972037941b9e572fe1ef5c988421522f
 
 > warning: If you were not able to mark any of these on a particular week, please email your lecturer with the reason.
 
 #### Retrospective
 
 > In what ways have your thoughts about the design changed this week and why?
-<<<<<<< HEAD
-- Personally think that using various of Ollama models could be more beneficial in pricing and performance rather than training our own LLM or relying on GPT 3.5.   
-> Did you discuss these ideas with the group? What was the outcome?
-- I need more time to test more models and to see if it can be more useful and replaceable in actual use.     
-> How did you validate your progress this week?
-- I've downloaded some models of Ollama and tested them on my PC.
-=======
 - I found Ollama is fairly heavy in use and its generating time is quite slow to meet our expectation for real-time use   
 > Did you discuss these ideas with the group? What was the outcome?
 - Our team member is developing soft version of LLM to use it lightly.     
@@ -187,6 +161,71 @@ Mark all that applied this week
 
 
 
->>>>>>> 439bccc9972037941b9e572fe1ef5c988421522f
+## <4/June>
+#### Summary
+> What work did you do this week
+- I've been assigned to make a contribution to improve format fidelity and I have created a class for it. 
+
+> What work you are planning to do next week
+- I've also been asked to compare raw text from OCR and processed code from chatgpt and save as json file to see the difference from the comparison.
+
+> Any blockers
+- my api seems not available to run the fidelity code(error code - "openai.error.RateLimitError: You exceeded your current quota, please check your plan and billing details.")
 
 
+#### Issues and PRs
+> N/A
+
+#### Evidence
+Mark all that applied this week
+- [V] Attended class
+- [] Responded to PRs/Issues
+- [V] Met with the team online. Forum Microsoft Teams
+- [V] Commits to group repo
+
+> warning: If you were not able to mark any of these on a particular week, please email your lecturer with the reason.
+
+#### Retrospective
+
+> In what ways have your thoughts about the design changed this week and why?
+- N/A   
+> Did you discuss these ideas with the group? What was the outcome?
+- N/A     
+> How did you validate your progress this week?
+- N/A
+
+
+
+
+## <11/June>
+#### Summary
+> What work did you do this week
+- I've been trying  
+
+> What work you are planning to do next week
+- I've also been asked to compare raw text from OCR and processed code from chatgpt and save as json file to see the difference from the comparison.
+
+> Any blockers
+- my api seems not available to run the fidelity code(error code - "openai.error.RateLimitError: You exceeded your current quota, please check your plan and billing details.")
+
+
+#### Issues and PRs
+> N/A
+
+#### Evidence
+Mark all that applied this week
+- [V] Attended class
+- [] Responded to PRs/Issues
+- [V] Met with the team online. Forum Microsoft Teams
+- [V] Commits to group repo
+
+> warning: If you were not able to mark any of these on a particular week, please email your lecturer with the reason.
+
+#### Retrospective
+
+> In what ways have your thoughts about the design changed this week and why?
+- N/A   
+> Did you discuss these ideas with the group? What was the outcome?
+- N/A     
+> How did you validate your progress this week?
+- N/A
