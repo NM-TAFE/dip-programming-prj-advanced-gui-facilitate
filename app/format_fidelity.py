@@ -1,8 +1,6 @@
 import openai
 import logging
 
-# api_key = 'sk-proj-qOjAq0mmuC7MlSttlG6mT3BlbkFJonYVDHJQgo3OiMUDHi7d'
-
 
 class CodeFormatter:
     def __init__(self, api_key: str):
