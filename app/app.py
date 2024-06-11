@@ -1,5 +1,6 @@
 import wx
 import wx.media
+import logging
 
 
 class VideoPlayerFrame(wx.Frame):
@@ -11,6 +12,7 @@ class VideoPlayerFrame(wx.Frame):
         super(VideoPlayerFrame, self).__init__(parent=None, title=title, size=(1280, 720),
                                                style=wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR)
 
+        logging.debug("Initializing video player frame")
         panel = wx.Panel(self)
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -39,6 +41,7 @@ class VideoPlayerFrame(wx.Frame):
                 self.video_player.play_video()
             elif keycode == ord('O'):  # Open file dialog
                 # todo put into its own function
+                logging.debug("Open file dialog key pressed")
                 open_dialog = wx.FileDialog(self, "Open", "", "", "Video files (*.mp4)|*.mp4",
                                             wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
                 if open_dialog.ShowModal() == wx.ID_CANCEL:
@@ -52,6 +55,7 @@ class VideoPlayerFrame(wx.Frame):
 class VideoPlayer(wx.Panel):
     def __init__(self, parent):
         super(VideoPlayer, self).__init__(parent)
+        logging.debug("Initializing video player")
 
         self.SetBackgroundColour(wx.BLACK)
 
@@ -81,8 +85,10 @@ class VideoPlayer(wx.Panel):
     def play_video(self):
         if self.media.GetState() == wx.media.MEDIASTATE_PLAYING:
             self.media.Pause()
+            logging.debug("Video playing is now paused")
         else:
             self.media.Play()
+            logging.debug("Video playing is now playing")
 
     def update_timeline(self, event):
         # Update the slider position to match the current video play time
@@ -100,6 +106,7 @@ class HighlightTimeline(wx.Panel):
         self.thumb_position = 0.0  # Float position (0.0 to 1.0)
         self.Bind(wx.EVT_PAINT, self.on_paint)
 
+        logging.debug("Initializing highlight timeline")
     def add_highlight_range(self, start: float, end: float):
         self.highlights.append((start, end))
         self.Refresh()
@@ -138,6 +145,7 @@ class TextPanel(wx.Panel):
         super(TextPanel, self).__init__(parent)
         self.text_ctrl = wx.TextCtrl(self, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_NO_VSCROLL)
 
+        logging.debug("Initializing text panel")
         # Layout.
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.text_ctrl, 1, wx.EXPAND | wx.ALL, border=0)
