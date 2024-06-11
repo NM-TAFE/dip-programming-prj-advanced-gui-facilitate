@@ -55,19 +55,24 @@ any moderations they deem appropriate.
 
 ---
 
-TODO
+This Code of Conduct applies to all interactions within the developer community, including online platforms (forums, 
+chats), in-person events, and any other communication channels related to the community.
 
 ## Enforcement
 
 ---
 
-TODO
+Community Leaders will investigate any reported violations of the Code of Conduct. This may involve contacting the 
+reporting party and the alleged violator to gather information. Based on the investigation, the Community Leaders will 
+determine the appropriate corrective action, which may range from a warning to a permanent ban from the community.
 
 ## Enforcement Guidelines
 
 ---
 
-TODO
+The Community Leaders will consider the severity of the violation, the history of the participant, and any mitigating 
+factors when determining the appropriate corrective action. The goal of enforcement is to educate the participant and 
+maintain a welcoming environment for all members of the community.
 
 ## Attribution
 

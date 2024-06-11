@@ -12,9 +12,9 @@
 
 **AI Powered OCR Code Recognition from Video Tutorials**
 
-[![Build](https://github.com/NM-TAFE/project-advanced-ui-development-team-mental-capacity/actions/workflows/build.yml/badge.svg)](https://github.com/NM-TAFE/project-advanced-ui-development-team-mental-capacity/actions/workflows/build.yml)
-[![Tests](https://github.com/NM-TAFE/project-advanced-ui-development-team-mental-capacity/actions/workflows/tests.yml/badge.svg)](https://github.com/NM-TAFE/project-advanced-ui-development-team-mental-capacity/actions/workflows/tests.yml)
-[![Accessibility](https://github.com/NM-TAFE/project-advanced-ui-development-team-mental-capacity/actions/workflows/accesibility.yml/badge.svg)](https://github.com/NM-TAFE/project-advanced-ui-development-team-mental-capacity/actions/workflows/accesibility.yml)
+[![Build](https://github.com/NM-TAFE/dip-project-ocrroo/actions/workflows/build.yml/badge.svg)](https://github.com/NM-TAFE/project-advanced-ui-development-team-mental-capacity/actions/workflows/build.yml)
+[![Tests](https://github.com/NM-TAFE/dip-project-ocrroo/actions/workflows/tests.yml/badge.svg)](https://github.com/NM-TAFE/project-advanced-ui-development-team-mental-capacity/actions/workflows/tests.yml)
+[![Accessibility](https://github.com/NM-TAFE/dip-project-ocrroo/actions/workflows/accesibility.yml/badge.svg)](https://github.com/NM-TAFE/dip-project-ocrroo/actions/workflows/accesibility.yml)
 
 </div>
 
@@ -34,13 +34,34 @@ The program reads code from videos to assist visually impaired developers in usi
 
 ## Installation
 
-To install and run this project, please follow the [Installation Guide](https://github.com/NM-TAFE/project-advanced-ui-development-team-mental-capacity/wiki/Installation-Guide)
-in the [Wiki](https://github.com/NM-TAFE/project-advanced-ui-development-team-mental-capacity/wiki).
+To install and run this project, please follow the [Installation Guide](https://github.com/NM-TAFE/dip-project-ocrroo/wiki/Installation-Guide)
+in the [Wiki](https://github.com/NM-TAFE/dip-project-ocrroo/wiki).
 
+ ### System Requirements
+
+* **Operating System**: Windows, macOS, or Linux
+* **Python Version**: 3.9 or later
+* **Dependencies**:
+	+ joblib==1.4.2
+	+ numpy==1.26.4
+	+ pandas==2.2.2
+	+ pillow==10.3.0
+	+ pip==23.2.1
+	+ python-dateutil==2.9.0.post0
+	+ pytz==2024.1
+	+ scikit-learn==1.5.0
+	+ scipy==1.13.1
+	+ six==1.16.0
+	+ threadpoolctl==3.5.0
+	+ tzdata==2024.1
+	+ wxPython==4.2.1
 #### Basic Installation
 
 1. Navigate to the projects root folder
 
+```bash
+cd path/to/project/root
+```
 2. Create a virtual environment
 
 ```bash
@@ -66,12 +87,24 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-5. ...rest of installation steps here
+## Running the Application
+
+1. Navigate to the application folder
+
+```bash
+cd app
+```
+
+2. Run the application
+
+```bash
+python app.py
+```
 
 ## Contributing
 
-To contribute to this project, please follow the [Contribution Guide](https://github.com/NM-TAFE/project-advanced-ui-development-team-mental-capacity/wiki/Contribution-Guide)
-in the [Wiki](https://github.com/NM-TAFE/project-advanced-ui-development-team-mental-capacity/wiki).
+To contribute to this project, please follow the [Contribution Guide](https://github.com/NM-TAFE/dip-project-ocrroo/wiki/wiki/Contribution-Guide)
+in the [Wiki](https://github.com/NM-TAFE/dip-project-ocrroo/wiki).
 
 ## Code of Conduct
 

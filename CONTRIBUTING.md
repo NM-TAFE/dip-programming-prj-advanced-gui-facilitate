@@ -18,7 +18,8 @@ N.B While working on this project the NM-TAFE code of conduct still applies.
 ### Project set up
 
 1. Fork the repo to your local device
-2. Follow the steps on this link to set up the project \***\*link\*\***
+2. Follow the steps on this link to set up the project [README](README.md)
+
 
 ## ISSUES
 

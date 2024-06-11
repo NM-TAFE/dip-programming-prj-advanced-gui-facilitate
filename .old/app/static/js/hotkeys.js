@@ -14,10 +14,20 @@ document.addEventListener("keydown", function (event) {
     for (let action in hotkeys) {
         let actionHotkeys = hotkeys[action].split(",");
         let flag = true;
-        // TODO: Change this to loop through pressedKeys and check that ONLY the actionHotkeys are pressed to prevent false positives.
-        for (let key in actionHotkeys) {
-            if (!pressedKeys[actionHotkeys[key]]) {
+        // Check that only the actionHotKeys are pressed
+        for (let key in pressedKeys) {
+            if (!actionHotkeys.includes(key)){
+                if (pressedKeys[key]){
+                    flag = false;
+                    break;
+                }
+            }
+        }
+        // Check that all actionHotKeys are pressed
+        for (let key of actionHotkeys){
+            if (!pressedKeys[key]){
                 flag = false;
+                break;
             }
         }
         // Disable global hotkeys while WebCli open
