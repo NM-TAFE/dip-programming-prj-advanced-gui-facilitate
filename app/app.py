@@ -2,6 +2,7 @@ import wx
 import wx.media
 import logging
 from typing import Callable
+import json
 
 
 class VideoPlayerFrame(wx.Frame):
@@ -17,13 +18,13 @@ class VideoPlayerFrame(wx.Frame):
         panel = wx.Panel(self)
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        # Video player.
-        self.video_player = VideoPlayer(panel)
-        sizer.Add(self.video_player, 2, wx.EXPAND | wx.ALL, border=0)
-
-        # Text panel.
-        self.text_panel = TextPanel(panel)
+        # Text panel
+        self.text_panel = TextPanel(panel)  # Create TextPanel instance
         sizer.Add(self.text_panel, 1, wx.EXPAND | wx.ALL, border=0)
+
+        # Video player
+        self.video_player = VideoPlayer(panel, self.text_panel)  # Pass text_panel
+        sizer.Add(self.video_player, 2, wx.EXPAND | wx.ALL, border=0)
 
         panel.SetSizer(sizer)
 
@@ -112,7 +113,7 @@ class ShortcutDialog(wx.Dialog):
 
 
 class VideoPlayer(wx.Panel):
-    def __init__(self, parent):
+    def __init__(self, parent, text_panel):
         super(VideoPlayer, self).__init__(parent)
         logging.debug("Initializing video player")
 
@@ -140,6 +141,8 @@ class VideoPlayer(wx.Panel):
         sizer.Add(self.media, 2, wx.EXPAND)
         sizer.Add(self.timeline, 0, wx.EXPAND | wx.ALL, border=5)
         self.SetSizer(sizer)
+        
+        self.text_panel = text_panel
 
     """
     Shortcut functions
@@ -154,6 +157,16 @@ class VideoPlayer(wx.Panel):
         file_path = open_dialog.GetPath()
         self.media.Load(file_path)
         open_dialog.Destroy()
+        
+        
+        # Load JSON file with the same name as the video file
+        # assumes JSON file is same name as video file but with .json extension
+        json_path = file_path.rsplit('.', 1)[0] + '.json'
+        try:
+            with open(json_path, 'r') as f:
+                self.data = json.load(f)
+        except FileNotFoundError:
+            wx.MessageBox('No JSON file found with the same name as the video file.', 'Error', wx.OK | wx.ICON_ERROR)
 
     def play_video(self):
         if self.media.GetState() == wx.media.MEDIASTATE_PLAYING:
@@ -175,13 +188,24 @@ class VideoPlayer(wx.Panel):
 
     def update_timeline(self, event):
         # Update the slider position to match the current video play time
+        current_time = self.media.Tell() / 1000  # Convert milliseconds to seconds
         if self.media.Length() > 0:
-            current_time = self.media.Tell() / 1000  # Convert milliseconds to seconds
             total_time = self.media.Length() / 1000  # Total duration in seconds
             if total_time > 0:
                 self.timeline.set_thumb_position(current_time / total_time)
 
+        # Update the text panel based on the current video time
+        for item in self.data:
+            # Convert JSON time to seconds
+            start_time = item['start_time']
+            end_time = item['end_time']
 
+            if start_time <= current_time <= end_time:
+                self.text_panel.update_text(item['llm_output'])
+                break  # Stop searching after a match is found
+        else:
+            self.text_panel.update_text("")  # Clear text if no match
+            
 class HighlightTimeline(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TAB_TRAVERSAL)
