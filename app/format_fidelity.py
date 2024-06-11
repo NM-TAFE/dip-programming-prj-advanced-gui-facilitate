@@ -42,7 +42,3 @@ class CodeFormatter:
             return extracted_text
 
 
-# Example usage:
-# formatter = CodeFormatter(api_key)
-# formatted_code = formatter.format_code(extracted_text='some raw OCR text', language='Python')
-# print(formatted_code)
