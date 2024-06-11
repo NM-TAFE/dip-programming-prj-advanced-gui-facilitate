@@ -44,7 +44,7 @@ New ideas can be suggested and discussed on our the Team Discussion Board or Tea
 
 ---
 
-This project is licensed under the [Creative Commons Zero v1.0 Universal](../LICENSE) license.
+This project is licensed under the [Creative Commons Zero v1.0 Universal](LICENSE) license.
 
 ## CODING STYLE
 

@@ -97,7 +97,7 @@ in the [Wiki](https://github.com/NM-TAFE/project-advanced-ui-development-team-me
 
 ## License
 
-This project is licensed under the [Creative Commons Zero v1.0 Universal](../LICENSE) license.
+This project is licensed under the [Creative Commons Zero v1.0 Universal](LICENSE) license.
 
 ## Credits
 
