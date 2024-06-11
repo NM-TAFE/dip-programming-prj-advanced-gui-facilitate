@@ -1,6 +1,6 @@
-import openai
+from openai import OpenAI
 import logging
-
+import os
 
 class CodeFormatter:
     def __init__(self, api_key: str):
@@ -9,7 +9,7 @@ class CodeFormatter:
 
         :param api_key: OpenAI API key for authenticating requests.
         """
-        openai.api_key = api_key
+        self.client = OpenAI(api_key=api_key)
 
     def format_code(self, extracted_text: str, language: str) -> str:
         """
@@ -23,7 +23,7 @@ class CodeFormatter:
         try:
             prompt = f"Fix up the following {language} code snippet, fix up any indentation errors, syntax errors, " \
                      f"and anything else that is incorrect: '{extracted_text}'"
-            response = openai.ChatCompletion.create(
+            response = self.client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system",
@@ -36,9 +36,13 @@ class CodeFormatter:
                     {"role": "user", "content": prompt}
                 ]
             )
-            return response.choices[0].message['content']
-        except openai.OpenAIError as error:
+            return response.choices[0].message.content
+        except Exception as error:
             logging.exception(error)
             return extracted_text
 
-
+# Example usage:
+api_key = os.environ.get('OPENAI_API_KEY', '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')
+formatter = CodeFormatter(api_key)
+formatted_code = formatter.format_code(extracted_text='print(hello world)', language='Python')
+print(formatted_code)

@@ -30,11 +30,11 @@ Mark all that applied this week
 #### Retrospective
 
 > In what ways have your thoughts about the design changed this week and why?
-- I didn't have a firm idea yet.
+- N/A
 > Did you discuss these ideas with the group? What was the outcome?
-- I didn't discuss anything.
+- N/A
 > How did you validate your progress this week?
-- I didn't
+- N/A
 
 
 
@@ -179,9 +179,9 @@ Mark all that applied this week
 #### Evidence
 Mark all that applied this week
 - [V] Attended class
-- [] Responded to PRs/Issues
+- [V] Responded to PRs/Issues
 - [V] Met with the team online. Forum Microsoft Teams
-- [V] Commits to group repo
+- [] Commits to group repo
 
 > warning: If you were not able to mark any of these on a particular week, please email your lecturer with the reason.
 
@@ -200,13 +200,14 @@ Mark all that applied this week
 ## <11/June>
 #### Summary
 > What work did you do this week
-- I've been trying  
+- I've been trying to save raw OCR text and code processed by chatgpt in a json file.
+- 
 
 > What work you are planning to do next week
-- I've also been asked to compare raw text from OCR and processed code from chatgpt and save as json file to see the difference from the comparison.
+- Run fidelity test with available api key
 
 > Any blockers
-- my api seems not available to run the fidelity code(error code - "openai.error.RateLimitError: You exceeded your current quota, please check your plan and billing details.")
+- Faced an issue with new OcrRoo not transcripting code
 
 
 #### Issues and PRs
