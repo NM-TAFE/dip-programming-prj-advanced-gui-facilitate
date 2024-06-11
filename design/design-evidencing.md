@@ -48,27 +48,33 @@ You will validate your design by meeting with a user representative: the product
 
 ##### Meeting minutes
 
-- [ ] Meeting held on [date]
-- [ ] Persona discussed: [persona name]
-- [ ] Design artefacts reviewed: [list of artifacts]
-- [ ] Issues discussed: [list of issues]
-- [ ] Feedback provided: [feedback]
+- [x] Meeting held on 11/06/2024
+- [x] Persona discussed: Steve
+- [x] Design artefacts reviewed: app-flow.jpg and find-text-occurrence.jpg
+- [x] Issues discussed
+- [x] Feedback provided
 
 ##### What worked well
 
-- [ ] [list of things that worked well]
+- Use of low fidelity mock-ups
+- Understood persona, allowing us to prioritise the core components of the project
 
 ##### What could be improved
 
-- [ ] [list of things that could be improved]
+- A lot of focus on technical detail over app flow
+- Needed better understanding of how code follows video
+- Mismatch of transcript presentation across team members
 
 ##### What will you change before the next meeting
 
-- [ ] [list of things that will be changed before the next meeting] (no commitment to complete this)
+- User test assumptions 
+- Validate framing of transcript presentation with user, whether a live representation of 
+  code on screen is preferable to a pre-generated transcript displaying all code occurrences
+- Test code generation matches expectations
 
 ##### Were there any questions that needed to be discussed with the user
 
-- [ ] [list of questions that need to be discussed with the user]
+- Yes, we needed to discuss user preference for display of the code transcript
 
 #### Lecturer's checklist (to be used by the lecturer)
 
