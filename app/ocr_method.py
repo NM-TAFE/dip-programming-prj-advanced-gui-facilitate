@@ -11,7 +11,10 @@ class VideoTextExtractor:
         self.difference_threshold = difference_threshold
         self.frame_diff_threshold = frame_diff_threshold
         self.threshold_value = threshold_value
-        pytesseract.pytesseract.tesseract_cmd = r'C:\Users\bishi\AppData\Local\Programs\Tesseract-OCR\tesseract.exe'
+
+        # Load App Json Config
+        app_config = self.load_app_json_config()
+        pytesseract.pytesseract.tesseract_cmd = app_config['config']['tessaractPath']
 
 
     def frame_difference(self, frame1, frame2):
@@ -183,6 +186,18 @@ class VideoTextExtractor:
         self.save_segments_to_json(segments)
         print(f"Text segments have been saved to {self.output_json_path}")
 
+    def load_app_json_config(self, path="app/app-config.json"):
+        """
+        Read App Json Config File
+        
+        Parameters: 
+            path(str) : path to JSON config file 
+        
+        Returns: (dict) JSON Loaded file
+        """        
+        with open(path, 'r') as file:
+            json_data = json.load(file)
+        return json_data
 
 if __name__ == "__main__":
     # Example usage
