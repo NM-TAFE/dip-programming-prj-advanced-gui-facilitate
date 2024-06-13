@@ -170,7 +170,7 @@ class VideoTextExtractor:
                                           current_segment["extracted_text"])  # Check reverse containment
                 is_within = current_segment["extracted_text"] in next_segment["extracted_text"]
 
-                if ratio_full >= 70 or ratio_within >= 80 or is_within:  # Adjust thresholds if needed (decrease for more leniance)
+                if ratio_full >= 70 or ratio_within >= 80 or is_within:  # Adjust thresholds if needed (decrease for more lenience)
                     # Combine segments
                     current_segment["end_frame"] = next_segment["end_frame"]
                     current_segment["end_time"] = next_segment["end_time"]
