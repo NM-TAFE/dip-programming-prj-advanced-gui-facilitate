@@ -3,6 +3,7 @@ import wx.media
 import logging
 from typing import Callable
 import json
+import pygame
 
 
 class VideoPlayerFrame(wx.Frame):
@@ -186,6 +187,24 @@ class VideoPlayer(wx.Panel):
         new_position = current_position + seconds * 1000
         self.media.Seek(new_position)
 
+    def play_sound(self, audio_path="app/media/one-beep.mp3"):
+        """
+        Play a sound file.
+
+        Args:
+            audio_path (str, optional): Path to the audio file to be played.
+                Defaults to "app/media/one-beep.mp3".
+
+        Notes:
+            This function can be used to play beep sounds.
+        """        
+        pygame.mixer.init()
+        pygame.mixer.music.load(audio_path)
+        pygame.mixer.music.play()
+        pygame.time.delay(500)
+        pygame.mixer.music.stop()
+        pygame.mixer.quit()            
+
     def update_timeline(self, event):
         # Update the slider position to match the current video play time
         current_time = self.media.Tell() / 1000  # Convert milliseconds to seconds
@@ -201,10 +220,20 @@ class VideoPlayer(wx.Panel):
             end_time = item['end_time']
 
             if start_time <= current_time <= end_time:
-                self.text_panel.update_text(item['llm_output'])
+                # Add to chat history if item output is different than the last outputted item 
+                if not self.text_panel.is_chat_history_empty() and self.text_panel.retrieve_last_chat_history() != item['llm_output']:
+                    self.text_panel.update_text(item['llm_output'])
+                    self.text_panel.add_to_chat_history(item['llm_output'])
+                    self.play_sound()
                 break  # Stop searching after a match is found
         else:
             self.text_panel.update_text("")  # Clear text if no match
+            # Add to chat history if item output is different than the last outputted item 
+            if not self.text_panel.is_chat_history_empty() and self.text_panel.retrieve_last_chat_history() != '': 
+                self.text_panel.add_to_chat_history('')
+                # Play two beeps to demonstrate end of text interaction
+                self.play_sound('app/media/two-beeps.mp3')
+
             
 class HighlightTimeline(wx.Panel):
     def __init__(self, parent):
@@ -252,6 +281,9 @@ class TextPanel(wx.Panel):
     def __init__(self, parent):
         super(TextPanel, self).__init__(parent)
         self.text_ctrl = wx.TextCtrl(self, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_NO_VSCROLL)
+        
+        """ Chat History - for record tracking of outputed text messages """
+        self.chat_history = ['']
 
         logging.debug("Initializing text panel")
         # Layout.
@@ -261,6 +293,36 @@ class TextPanel(wx.Panel):
 
     def update_text(self, text):
         self.text_ctrl.SetValue(text)
+    
+    def add_to_chat_history(self, item):
+        """
+        Add an item to the chat history list.
+
+        Args:
+            item: The item to add to the chat history.
+
+        """
+        self.chat_history.append(item)
+    
+    def retrieve_last_chat_history(self):
+        """
+        Retrieve the last item from the chat history.
+
+        Returns:
+            The last item in the chat history list.
+
+        """
+        return self.chat_history[-1]
+    
+    def is_chat_history_empty(self):
+        """
+        Check if the chat history is empty.
+
+        Returns:
+            bool: True if the chat history list is empty, False otherwise.
+
+        """
+        return len(self.chat_history) == 0
 
 
 if __name__ == '__main__':
