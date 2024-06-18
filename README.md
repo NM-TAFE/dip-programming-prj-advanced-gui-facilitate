@@ -12,9 +12,9 @@
 
 **AI Powered OCR Code Recognition from Video Tutorials**
 
-[![Build](https://github.com/NM-TAFE/dip-project-ocrroo/actions/workflows/build.yml/badge.svg)](https://github.com/NM-TAFE/project-advanced-ui-development-team-mental-capacity/actions/workflows/build.yml)
-[![Tests](https://github.com/NM-TAFE/dip-project-ocrroo/actions/workflows/tests.yml/badge.svg)](https://github.com/NM-TAFE/project-advanced-ui-development-team-mental-capacity/actions/workflows/tests.yml)
-[![Accessibility](https://github.com/NM-TAFE/dip-project-ocrroo/actions/workflows/accesibility.yml/badge.svg)](https://github.com/NM-TAFE/dip-project-ocrroo/actions/workflows/accesibility.yml)
+[![Tests](https://github.com/NM-TAFE/dip-programming-prj-advanced-gui-facilitate/actions/workflows/tests.yml/badge.svg)](https://github.com/NM-TAFE/dip-programming-prj-advanced-gui-facilitate/actions/workflows/tests.yml)
+[![Build](https://github.com/NM-TAFE/dip-programming-prj-advanced-gui-facilitate/actions/workflows/build.yml/badge.svg)](https://github.com/NM-TAFE/dip-programming-prj-advanced-gui-facilitate/actions/workflows/build.yml)
+[![Accessibility](https://github.com/NM-TAFE/dip-programming-prj-advanced-gui-facilitate/actions/workflows/accesibility.yml/badge.svg)](https://github.com/NM-TAFE/dip-programming-prj-advanced-gui-facilitate/actions/workflows/accesibility.yml)
 
 </div>
 
@@ -34,8 +34,8 @@ The program reads code from videos to assist visually impaired developers in usi
 
 ## Installation
 
-To install and run this project, please follow the [Installation Guide](https://github.com/NM-TAFE/dip-project-ocrroo/wiki/Installation-Guide)
-in the [Wiki](https://github.com/NM-TAFE/dip-project-ocrroo/wiki).
+To install and run this project, please follow the [Installation Guide](https://github.com/NM-TAFE/dip-programming-prj-advanced-gui-facilitate/wiki/Installation-Guide)
+in the [Wiki](https://github.com/NM-TAFE/dip-programming-prj-advanced-gui-facilitate/wiki).
 
  ### System Requirements
 
@@ -103,14 +103,14 @@ python app.py
 
 ## Contributing
 
-To contribute to this project, please follow the [Contribution Guide](https://github.com/NM-TAFE/dip-project-ocrroo/wiki/wiki/Contribution-Guide)
-in the [Wiki](https://github.com/NM-TAFE/dip-project-ocrroo/wiki).
+To contribute to this project, please follow the [Contribution Guide](https://github.com/ninihub1/dip-programming-prj-advanced-gui-facilitate/wiki/wiki/Contribution-Guide)
+in the [Wiki](https://github.com/ninihub1/dip-programming-prj-advanced-gui-facilitate/wiki).
 
 ## Code of Conduct
 
 ---
 
-- To view the code of conduct, please visit the [Code of Conduct] page in the [Wiki](https://github.com/NM-TAFE/project-advanced-ui-development-team-mental-capacity/wiki).
+- To view the code of conduct, please visit the [Code of Conduct] page in the [Wiki](https://github.com/ninihub1/dip-programming-prj-advanced-gui-facilitate/wiki).
 
 ## License
 

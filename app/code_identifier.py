@@ -42,6 +42,9 @@ class CodeIdentifier:
         self.nb_predict_y = self.nb_classifier.predict(x_test_counts)
 
     def __predict_language(self, clf, vectorizer, code) -> str:
+
+        if not code:
+            return "Plain Text"
         # Preprocess the code
         code_counts = vectorizer.transform([code])
 
