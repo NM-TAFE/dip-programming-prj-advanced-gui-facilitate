@@ -1,0 +1,25 @@
+{% extends "new-base.html" %}
+{% set title = "Collaborate" %}
+{% block content %}
+<div class="m-8">
+    <h2 class="text-6xl font-bold text-center text-transparent bg-clip-text
+            bg-gradient-to-tr from-indigo-500 via-fuchsia-400 to-purple-400">
+        <i class="fa-solid fa-tower-cell mr-4"></i>Create Collaborate Session
+    </h2>
+    <div class="w-1/2 mt-8 mx-auto">
+        <h3 class="text-xl"><strong>Step 1.</strong> Select Video</h3>
+        <select class="mt-1 p-1 w-full rounded-md border-gray-200 border bg-white shadow-sm" name=""
+                id="">
+            <option value="">Select Video to Share</option>
+        </select>
+        <h3 class="text-xl mt-4"><strong>Step 2.</strong> Create Session Password</h3>
+        <input class="mt-1 p-1 w-full rounded-md border-gray-200 border bg-white shadow-sm"
+               placeholder="Create a secure password" type="password">
+        <input class="mt-4 p-1 w-full rounded-md border-gray-200 border bg-white shadow-sm"
+               placeholder="Confirm password" type="password">
+        <button type="submit" class="bg-gradient-to-r from-indigo-400 to-purple-400 text-white font-bold py-1
+                mt-4 shadow-sm rounded-xl hover:scale-[1.02] w-full hover:underline transition">Create Session
+        </button>
+    </div>
+</div>
+{% endblock %}

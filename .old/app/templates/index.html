@@ -1,0 +1,99 @@
+{% extends "new-base.html" %}
+{% set title = "Home" %}
+{% block content %}
+    <div class="m-8">
+        {% if setup_progress|length < 4 %}
+            <section class="mb-4">
+                <div class="w-fit mx-auto">
+                    <div>
+                        <h2 class="text-6xl font-bold text-center text-transparent bg-clip-text caret-pink-600
+                            bg-gradient-to-tr from-indigo-500 via-fuchsia-400 to-purple-400">Welcome to OcrRoo!</h2>
+                    </div>
+                    <div class="w-fit mx-auto mt-8">
+                        <p class="px-2 text-gray-400">Complete the following actions in the <a class="underline"
+                           href="/settings">settings</a> menu to finalise setup.</p>
+                        <hr class="my-2">
+                        <p class="text-lg {% if "tesseract" in setup_progress %}line-through text-purple-600{% endif %}">
+                            <i class="{% if "tesseract" in setup_progress %}fa-solid fa-check-circle text-purple-400{% else %}
+                            fa-regular fa-circle{% endif %} mr-2"></i>Configure Tesseract OCR Executable
+                        </p>
+                        <p class="text-lg {% if "ide" in setup_progress %}line-through text-purple-600{% endif %}">
+                            <i class="{% if "ide" in setup_progress %}fa-solid fa-check-circle text-purple-400{% else %}
+                            fa-regular fa-circle{% endif %} mr-2"></i>Configure IDE Executable
+                        </p>
+                        <p class="text-lg {% if "api" in setup_progress %}line-through text-purple-600{% endif %}">
+                            <i class="{% if "api" in setup_progress %}fa-solid fa-check-circle text-purple-400{% else %}
+                            fa-regular fa-circle{% endif %} mr-2"></i>Provide OpenAI API Key
+                        </p>
+                        <p class="text-lg {% if "username" in setup_progress %}line-through text-purple-600{% endif %}">
+                            <i class="{% if "username" in setup_progress %}fa-solid fa-check-circle text-purple-400{% else %}
+                            fa-regular fa-circle{% endif %} mr-2"></i>Set a Username to Collaborate With Other Users
+                        </p>
+                    </div>
+                </div>
+            </section>
+        {% else %}
+            <h2 class="text-6xl text-center font-bold text-transparent bg-clip-text caret-pink-600
+                bg-gradient-to-tr from-indigo-500 via-fuchsia-400 to-purple-400"><i class="fa-solid fa-house mr-4"></i>OcrRoo Home</h2>
+        {% endif %}
+        {% if continue_watching %}
+            <section class="mb-4">
+                <div>
+                    <h2 class="text-2xl">Continue Watching</h2>
+                    <hr class="mb-4 mt-2">
+                    <div class="flex overflow-x-auto gap-4">
+                    {% for current_video in continue_watching %}
+                        <div class="w-1/6 shrink-0 mb-2 border-gray-600 border bg-white">
+                            <a href="/play_video/{{ current_video["filename"] }}" >
+                                <img class="border-gray-600 border border-b-0 w-full h-40"
+                                     src="{{url_for('static',filename='img/' + current_video["thumbnail"])}}"
+                                     alt="{{ current_video["alias"] }} Thumbnail">
+                            </a>
+                            <p style="width: {{ current_video["progress_percent"] }}%;" class="bg-gradient-to-tr from-indigo-500 via-fuchsia-400 to-purple-400 h-1 rounded-r-full">&nbsp</p>
+                            <span class="flex justify-between items-center p-1">
+                                <span>{{ current_video["alias"] }}</span>
+                                <span class="whitespace-nowrap text-gray-500 text-sm">
+                                    {{ current_video["progress"] }} / {{ current_video["video_length"] }}
+                                </span>
+                            </span>
+                            <p class="text-gray-500 p-1 pt-0 text-sm">{{ current_video["captures"]|length }}
+                                code capture/s
+                            </p>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+        {% if all_videos %}
+            <section>
+                <div>
+                    <h2 class="text-2xl">Your Video Library</h2>
+                    <hr class="my-2">
+                    <div class="grid grid-cols-6 overflow-x-auto mt-4 gap-4">
+                        {% for current_video in all_videos %}
+                        <div class="flex flex-col items-center grid-col-1 border border-gray-600 bg-white">
+                            <a class="w-full" href="/play_video/{{ current_video["filename"] }}">
+                                <img class="border-gray-600 border w-full h-40"
+                                     src="{{url_for('static',filename='img/' + current_video["thumbnail"])}}"
+                                     alt="{{ current_video["alias"] }} Thumbnail">
+                            </a>
+                            <span class="flex w-full justify-between items-center p-1">
+                                <span>{{ current_video["alias"] }}</span>
+                                <span class="text-gray-500 text-sm">{{ current_video["video_length"] }}</span>
+                            </span>
+                            <div class="flex w-full justify-between items-center px-1 pb-1">
+                                <span class="text-gray-500 w-fit text-sm">{{ current_video["captures"]|length }} code capture/s
+                                </span>
+                                <button onclick="deleteVideo('{{ current_video["filename"] }}')"
+                                        aria-label="delete video" class="text-red-400" type="button"><i class="fa-regular fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+    </div>
+{% endblock %}

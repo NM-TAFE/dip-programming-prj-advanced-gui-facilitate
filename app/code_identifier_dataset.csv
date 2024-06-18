@@ -1,0 +1,78 @@
+code,language
+"print(""Hello, World!"")
+",Python
+"#This is a comment.
+print(""Hello, World!"")",Python
+"# Python Program to find the area of triangle
+
+a = 5
+b = 6
+c = 7
+
+# Uncomment below to take inputs from the user
+# a = float(input('Enter first side: '))
+# b = float(input('Enter second side: '))
+# c = float(input('Enter third side: '))
+
+# calculate the semi-perimeter
+s = (a + b + c) / 2
+
+# calculate the area
+area = (s*(s-a)*(s-b)*(s-c)) ** 0.5
+print('The area of the triangle is %0.2f' %area)",Python
+"# Python program to check if year is a leap year or not
+
+year = 2000
+
+# To get year (integer input) from the user
+# year = int(input(""Enter a year: ""))
+
+# divided by 100 means century year (ending with 00)
+# century year divided by 400 is leap year
+if (year % 400 == 0) and (year % 100 == 0):
+    print(""{0} is a leap year"".format(year))
+
+# not divided by 100 means not a century year
+# year divided by 4 is a leap year
+elif (year % 4 ==0) and (year % 100 != 0):
+    print(""{0} is a leap year"".format(year))
+
+# if not divided by both 400 (century year) and 4 (not century year)
+# year is not leap year
+else:
+    print(""{0} is not a leap year"".format(year))",Python
+"class Polygon:
+    def sides_no(self):
+        pass
+
+
+class Triangle(Polygon):
+    def area(self):
+        pass
+
+
+obj_polygon = Polygon()
+obj_triangle = Triangle()
+
+print(type(obj_triangle) == Triangle)  # true
+print(type(obj_triangle) == Polygon)  # false
+
+print(isinstance(obj_polygon, Polygon))  # true
+print(isinstance(obj_triangle, Polygon))  # true
+",Python
+"try:
+
+    even_numbers = [2,4,6,8]
+    print(even_numbers[5])
+
+except ZeroDivisionError:
+    print(""Denominator cannot be 0."")
+
+except IndexError:
+    print(""Index Out of Bound."")",Python
+"To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind.",Plain Text
+"It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair.",Plain Text
+"No one would have believed in the last years of the nineteenth century that this world was being watched keenly and closely by intelligences greater than man's and yet as mortal as his own; that as men busied themselves about their various concerns they were scrutinized and studied, perhaps almost as narrowly as a man with a microscope might scrutinize the transient creatures that swarm and multiply in a drop of water.",Plain Text
+"Call me Ishmael. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to sea as soon as I can.",Plain Text
+"Generally, by the time you are Real, most of your hair has been loved off, and your eyes drop out and you get loose in the joints and very shabby. But these things donÃ¢â‚¬â„¢t matter at all, because once you are Real you canÃ¢â‚¬â„¢t be ugly, except to people who donÃ¢â‚¬â„¢t understand. The way to print in the language is using the print function we will make.",Plain Text
+"Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, 'and what is the use of a book,' thought Alice 'without pictures or conversations?",Plain Text

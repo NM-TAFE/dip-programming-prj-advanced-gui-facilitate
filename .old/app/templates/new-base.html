@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }} | OcrRoo</title>
+    <audio id="clickTone" class="hidden" src="{{ url_for('static', filename='audio/click_tone.wav') }}"></audio>
+    <script> const hotkeys = {}; </script>
+    {% for current_hotkey in hotkeys %}
+    <script> hotkeys['{{ current_hotkey }}'] = '{{ hotkeys[current_hotkey] }}'; </script>
+    {% endfor %}
+    <script src="{{url_for('static', filename='js/hotkeys.js')}}"></script>
+    <script src="{{url_for('static', filename='js/otherControls.js')}}"></script>
+    {# Todo: Change from using CDN to using NPM or other package manager #}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+          integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="icon" type="image/png" href="{{ url_for("static", filename="resources/favicon.png") }}">
+</head>
+<body class="bg-gradient-to-br from-gray-50 via-gray-50 to-purple-200">
+
+<div class="flex">
+    <nav class="flex h-screen flex-col sticky left-0 top-0 w-fit min-w-fit justify-between border-e bg-white">
+        <a href="#mainContent" class="sr-only">Skip to Main Content</a>
+        <div class="p-4">
+            <div class="flex items-center w-fit mx-auto">
+                <img class="w-10" src="{{ url_for("static", filename="resources/logo.png") }}"
+                    alt="Application Logo">
+                <p class="pl-2 text-2xl font-extrabold text-transparent bg-clip-text caret-pink-600
+                    bg-gradient-to-tr from-indigo-500 via-fuchsia-400 to-purple-400">OcrRoo</p>
+            </div>
+            <hr class="my-4">
+            <ul class="space-y-1">
+                <li>
+                    <a href="/" class="block flex flex-col rounded-lg px-4 py-2 text-sm font-medium
+                            {% if title == " Home" %}text-gray-700 bg-gray-100{% else %}text-gray-500 hover:bg-gray-100
+                    hover:text-gray-700{% endif %}">
+                    <span><i class="fa-solid fa-house mr-2"></i>Home</span>
+                    <span class="text-xs text-gray-400 pt-1">({{ hotkeys["open_home_page"] }})</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/upload" class="block flex flex-col  rounded-lg px-4 py-2 text-sm font-medium
+                        {% if title == " Upload" %}text-gray-700 bg-gray-100{% else %}text-gray-500
+                        hover:bg-gray-100 hover:text-gray-700{% endif %}">
+                        <span><i class="fa-solid fa-upload mr-2"></i>
+                        Upload Video</span>
+                        <span class="text-xs text-gray-400 pt-1">({{ hotkeys["upload_video"] }})</span>
+                    </a>
+                </li>
+                <li class="hidden">
+                    <a href="/collaborate" class="block rounded-lg px-4 py-2 text-sm font-medium
+                        {% if title == " Collaborate" %}text-gray-700 bg-gray-100{% else %}text-gray-500
+                        hover:bg-gray-100
+                        hover:text-gray-700{% endif %}">
+                    <i class="fa-solid fa-user-group mr-2"></i>Collaborate
+                    </a>
+                </li>
+                <li>
+                    <a href="/settings" class="block flex flex-col rounded-lg px-4 py-2 text-sm font-medium
+                        {% if title == " Settings" %}text-gray-700 bg-gray-100{% else %}text-gray-500
+                        hover:bg-gray-100
+                        hover:text-gray-700{% endif %}">
+                        <span><i class="fa-solid fa-gear mr-2"></i>Settings</span>
+                        <span class="text-xs text-gray-400 pt-1">({{ hotkeys["open_settings_page"] }})</span>
+                    </a>
+                </li>
+            </ul>
+            <hr class="my-4">
+            <a href="" class="block flex flex-col rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100
+                    hover:text-gray-700">
+                <span><i class="fa-solid fa-volume-mute mr-2"></i>Unmute UI SFX</span>
+                <span class="text-xs text-gray-400 pt-1">({{ hotkeys["open_settings_page"] }})</span>
+            </a>
+        </div>
+        <div class="sticky inset-x-0 bottom-0 border-t text-center border-gray-100 py-4">
+            <a href="https://github.com/NM-TAFE" target="_blank" class="text-center text-2xl">
+                <i class="fa-brands fa-github"></i>
+            </a>
+            <p class="text-xs text-center">Developed by<br><span class="font-bold">Team Mental Capacity</span></p>
+        </div>
+    </nav>
+    <div class="flex-grow flex flex-col">
+        <main id="mainContent" class="flex-grow">
+            {% block content %}{% endblock %}
+        </main>
+        <section id="webCliContainer" class="hidden h-64 overflow-y-auto bg-slate-800/90 text-white p-2 bottom-0 sticky left-0 right-0 z-50">
+            <div class="flex items-center">
+                <label for="webCliInput" class="text-purple-300 w-fit mr-1">OcrRooWebCli></label>
+                <input id="webCliInput" class="flex-grow bg-transparent outline-none" type="text" autocomplete="off">
+            </div>
+        </section>
+        <script src="{{url_for('static', filename='js/webCli.js')}}"></script>
+    </div>
+</div>
+</body>
+</html>

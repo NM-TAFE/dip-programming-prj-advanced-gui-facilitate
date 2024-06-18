@@ -1,283 +1,270 @@
-import os.path
+import wx
+import wx.media
 import logging
-import shutil
-from typing import Optional
-import utils
-import web_cli
-from extract_text import ExtractText
-from flask import Flask, render_template, request, send_file, redirect
-import html
-import glob
-
-# Initialise flask app
-app = Flask(__name__, static_url_path='/static', static_folder='static')
-# Current video
-filename: Optional[str] = None
-# Flag to check if the search process should be canceled
-cancel_search_flag: bool = False
+from typing import Callable
+import json
 
 
-@app.context_processor
-def utility_processor():
+class VideoPlayerFrame(wx.Frame):
     """
-    Utility processor to send all hotkeys from config file to views/templates
-    :return: Object containing all hotkeys
+    The parent for everything in the wx user interface.
     """
-    return {
-        "hotkeys": utils.config()["Hotkeys"]
-    }
+
+    def __init__(self, title):
+        super(VideoPlayerFrame, self).__init__(parent=None, title=title, size=(1280, 720),
+                                               style=wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR)
+
+        logging.debug("Initializing video player frame")
+        panel = wx.Panel(self)
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Text panel
+        self.text_panel = TextPanel(panel)  # Create TextPanel instance
+        sizer.Add(self.text_panel, 1, wx.EXPAND | wx.ALL, border=0)
+
+        # Video player
+        self.video_player = VideoPlayer(panel, self.text_panel)  # Pass text_panel
+        sizer.Add(self.video_player, 2, wx.EXPAND | wx.ALL, border=0)
+
+        panel.SetSizer(sizer)
+
+        # Create menu bar listings.
+        menu_bar = MenuBar()
+        menu_bar.create_media_menu(self.video_player.open_file, self.on_quit)
+        menu_bar.create_help_menu(self.on_shortcut_dialog)
+        self.SetMenuBar(menu_bar)
+
+        # Events.
+        self.Bind(wx.EVT_CHAR_HOOK, self.on_key_press)
+
+    def on_key_press(self, event):
+        """
+        This function is called when a key is pressed.
+        Its primary purpose is to check for keyboard shortcuts being pressed.
+        """
+        keycode = event.GetKeyCode()
+        if event.ControlDown():  # Ctrl
+            if keycode == ord('O'):  # Ctrl+O - Open file dialog
+                self.video_player.open_file()
+            elif keycode == ord('Q'):  # Ctrl+Q - Quit
+                self.on_quit(event)
+        elif keycode == wx.WXK_SPACE:  # Space - Play/Pause
+            self.video_player.play_video()
+        elif keycode == wx.WXK_LEFT:  # ← - Skip back
+            self.video_player.skip_timeline(-2)
+        elif keycode == wx.WXK_RIGHT:  # → - Skip forward
+            self.video_player.skip_timeline(2)
+        elif keycode == wx.WXK_UP:  # ↑ - Volume up
+            self.video_player.update_volume(0.1)
+        elif keycode == wx.WXK_DOWN:  # ↓ - Volume down
+            self.video_player.update_volume(-0.1)
+        event.Skip()
+
+    def on_quit(self, event=None):
+        self.Close()
+
+    def on_shortcut_dialog(self, event=None):
+        about_dialog = ShortcutDialog(self)
+        about_dialog.ShowModal()
 
 
-@app.route("/")
-def index():
-    """
-    Return the home page view/template with setup progress and parsed video data
-    :return: Rendered template for home page
-    """
-    parsed_video_data = utils.parse_video_data()
-    return render_template("index.html",
-                           continue_watching=parsed_video_data["continue_watching"],
-                           all_videos=parsed_video_data["all_videos"], setup_progress=utils.get_setup_progress())
+class MenuBar(wx.MenuBar):
+    def __init__(self):
+        super(MenuBar, self).__init__()
+
+    def create_media_menu(self, open_func: Callable, quit_func: Callable):
+        media_menu = wx.Menu()
+        open_file_item = media_menu.Append(wx.ID_ANY, 'Open File\tCtrl-O')
+        self.Bind(wx.EVT_MENU, open_func, open_file_item)
+
+        quit_item = media_menu.Append(wx.ID_ANY, 'Quit\tCtrl-P')
+        self.Bind(wx.EVT_MENU, quit_func, quit_item)
+
+        self.Append(media_menu, "Media")
+
+    def create_help_menu(self, shortcut_dialog_func: Callable):
+        help_menu = wx.Menu()
+        shortcut_item = help_menu.Append(wx.ID_ANY, 'Keyboard Shortcuts')
+        self.Bind(wx.EVT_MENU, shortcut_dialog_func, shortcut_item)
+
+        self.Append(help_menu, "Help")
 
 
-@app.route("/settings")
-def settings():
-    """
-    Return the settings view/template
-    :return: Rendered template for settings page
-    """
-    current_settings = utils.get_current_settings()
-    return render_template("settings.html", current_settings=current_settings)
+class ShortcutDialog(wx.Dialog):
+    def __init__(self, parent):
+        super(ShortcutDialog, self).__init__(parent, title="About")
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        shortcuts = [
+            "Ctrl+O: Open File",
+            "Ctrl+Q: Quit",
+            "Space: Play/Pause",
+            "Left/Right Arrows: Skip Forward/Back",
+            "Up/Down Arrows: Volume Up/Down",
+        ]
+
+        for shortcut in shortcuts:
+            text = wx.StaticText(self, label=shortcut)
+            sizer.Add(text, 0, wx.ALL | wx.EXPAND, 5)
+
+        self.SetSizer(sizer)
+        self.Layout()
 
 
-@app.route("/web_cli", methods=['POST'])
-def web_cli_endpoint():
-    """
-    Ajax endpoint for web cli commands
-    :return: Response from web_cli parser as string or dict
-    """
-    data = request.get_json()
-    return web_cli.parse_command(data["command"])
+class VideoPlayer(wx.Panel):
+    def __init__(self, parent, text_panel):
+        super(VideoPlayer, self).__init__(parent)
+        logging.debug("Initializing video player")
 
+        self.SetBackgroundColour(wx.BLACK)
 
-@app.route("/collaborate")
-def collaborate():
-    """
-    Return collaborate start view/template
-    :return: Rendered template for collaborate start page
-    """
-    return render_template("collaborate.html")
+        # The video panel will parent both the video and placeholder.
+        #self.video_panel = wx.Panel(self)
 
+        self.media = wx.media.MediaCtrl(self, style=wx.SIMPLE_BORDER)
 
-@app.route("/collaborate/create")
-def create_collaborate():
-    """
-    Return collaborate create view/template
-    :return: Rendered template for collaborate create page
-    """
-    return render_template("collaborate-create.html")
+        # Create the placeholder.
+        # todo potentially create placeholder logo
 
+        # Create timeline.
+        # todo create custom timeline class with ability to highlight segments with code
+        self.timeline = HighlightTimeline(self)
 
-@app.route("/collaborate/join")
-def join_collaborate():
-    """
-    Return collaborate join view/template
-    :return: Rendered template for join collaborate page
-    """
-    pass
+        # Create a timer to update the timeline
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.update_timeline, self.timer)
+        self.timer.Start(100)  # Update every 100 milliseconds (0.1 second)
 
+        # Layout.
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.media, 2, wx.EXPAND)
+        sizer.Add(self.timeline, 0, wx.EXPAND | wx.ALL, border=5)
+        self.SetSizer(sizer)
+        
+        self.text_panel = text_panel
 
-@app.route("/upload")
-def upload():
     """
-    Return upload video view/template with YouTube config variable
-    :return: Rendered template for upload page
+    Shortcut functions
     """
-    return render_template("upload.html",
-                           use_youtube_downloader=eval(utils.config("Features", "use_youtube_downloader")))
 
+    def open_file(self, event=None):
+        logging.debug("Open file dialog key pressed")
+        open_dialog = wx.FileDialog(self, "Open", "", "", "Video files (*.mp4)|*.mp4",
+                                    wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        if open_dialog.ShowModal() == wx.ID_CANCEL:
+            return
+        file_path = open_dialog.GetPath()
+        self.media.Load(file_path)
+        open_dialog.Destroy()
+        
+        
+        # Load JSON file with the same name as the video file
+        # assumes JSON file is same name as video file but with .json extension
+        json_path = file_path.rsplit('.', 1)[0] + '.json'
+        try:
+            with open(json_path, 'r') as f:
+                self.data = json.load(f)
+        except FileNotFoundError:
+            wx.MessageBox('No JSON file found with the same name as the video file.', 'Error', wx.OK | wx.ICON_ERROR)
 
-@app.route("/videos")
-def serve_video():
-    """
-    Serve local/downloaded video file to view/template
-    :return: Video file
-    """
-    video_path = f'{utils.get_vid_save_path()}{filename}'
-    return send_file(video_path)
-
-
-@app.route("/upload/youtube/<video_id>")
-def upload_youtube_id(video_id: str):
-    """
-    Upload a YouTube video directly from url with get parameter.
-    :param video_id: The unique video id at the end of the YouTube video to be downloaded
-    :return: Redirect to appropriate page after downloading or failing
-    """
-    youtube_url = f"https://www.youtube.com/watch?v={video_id}"
-    return redirect(utils.download_youtube_video(youtube_url))
-
-
-@app.route('/capture_at_timestamp', methods=['POST'])
-def capture_at_timestamp():
-    """
-    Ajax endpoint for capturing code at current timestamp
-    :return: Extracted and formatted code from timestamp
-    """
-    data = request.get_json()
-    return ExtractText.extract_code_at_timestamp(f"{filename}", data.get('timestamp'))
-
-
-@app.route("/send_to_ide", methods=["POST"])
-def send_to_ide():
-    """
-    Ajax endpoint for sending code snippet to IDE
-    :return: String indicating success or failure
-    """
-    code = request.get_json().get("code_snippet")
-    unescaped_code = html.unescape(code)
-    if utils.send_code_snippet_to_ide(filename, unescaped_code):
-        return "success"
-    else:
-        return "fail"
-
-
-@app.route("/update_video_data", methods=["POST"])
-def update_video_data():
-    """
-    Ajax endpoint for updating video information in userdata
-    :return: String indicating success or failure
-    """
-    data = request.get_json()
-    if "progress" in data:
-        utils.update_user_video_data(filename, progress=data["progress"])
-        return "success"
-    elif "capture" in data:
-        utils.update_user_video_data(filename, capture=data["capture"])
-        return "success"
-    else:
-        logging.error("No compatible data type to update")
-        return {"error": "No compatible data type to update"}
-
-
-@app.route("/upload_video", methods=["POST"])
-def upload_video():
-    """
-    Upload a video from upload form to backend or from YouTube URL
-    :return: Redirect to appropriate page
-    """
-    youtube_url = request.form.get("youtubeInput")
-    file = request.files["localFileInput"]
-    # TODO: Move this into separate function, too messy to have this logic in route method
-    if file:
-        if not os.path.exists(f"{utils.get_vid_save_path()}"):
-            os.makedirs(f"{utils.get_vid_save_path()}")
-        file.save(f"{utils.get_vid_save_path()}" + file.filename)
-        global filename
-        filename = file.filename
-        file_hash = utils.hash_video_file(filename)
-        if utils.file_already_exists(file_hash):
-            return redirect(f"/play_video/{filename}")
-        video_title = request.form.get("videoTitle")
-        if video_title:
-            utils.add_video_to_user_data(filename, video_title, file_hash)
+    def play_video(self):
+        if self.media.GetState() == wx.media.MEDIASTATE_PLAYING:
+            self.media.Pause()
+            logging.debug("Video playing is now paused")
         else:
-            utils.add_video_to_user_data(filename, filename, file_hash)
-        return redirect(f"/play_video/{filename}")
-    elif youtube_url:
-        return redirect(utils.download_youtube_video(youtube_url))
-    logging.error("Failed to upload video file")
-    return redirect("/upload")
+            self.media.Play()
+            logging.debug("Video playing is now playing")
+
+    def update_volume(self, increment: float):
+        new_volume = self.media.GetVolume() + increment
+        clamped_volume = max(0.0, min(new_volume, 1.0))  # Clamp volume between 0.0 and 1.0
+        self.media.SetVolume(clamped_volume)
+
+    def skip_timeline(self, seconds: int):
+        current_position = self.media.Tell()
+        new_position = current_position + seconds * 1000
+        self.media.Seek(new_position)
+
+    def update_timeline(self, event):
+        # Update the slider position to match the current video play time
+        current_time = self.media.Tell() / 1000  # Convert milliseconds to seconds
+        if self.media.Length() > 0:
+            total_time = self.media.Length() / 1000  # Total duration in seconds
+            if total_time > 0:
+                self.timeline.set_thumb_position(current_time / total_time)
+
+        # Update the text panel based on the current video time
+        for item in self.data:
+            # Convert JSON time to seconds
+            start_time = item['start_time']
+            end_time = item['end_time']
+
+            if start_time <= current_time <= end_time:
+                self.text_panel.update_text(item['llm_output'])
+                break  # Stop searching after a match is found
+        else:
+            self.text_panel.update_text("")  # Clear text if no match
+            
+class HighlightTimeline(wx.Panel):
+    def __init__(self, parent):
+        super().__init__(parent, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TAB_TRAVERSAL)
+        self.highlights = []  # Highlight ranges
+        self.thumb_position = 0.0  # Float position (0.0 to 1.0)
+        self.Bind(wx.EVT_PAINT, self.on_paint)
+
+        logging.debug("Initializing highlight timeline")
+
+    def add_highlight_range(self, start: float, end: float):
+        self.highlights.append((start, end))
+        self.Refresh()
+
+    def set_thumb_position(self, value):
+        self.thumb_position = value
+        self.Refresh()
+
+    def on_paint(self, event):
+        dc = wx.BufferedPaintDC(self)
+        gc = wx.GraphicsContext.Create(dc)
+        width, height = self.GetClientSize()
+
+        # Draw the background of the timeline.
+        gc.SetPen(wx.Pen(wx.BLACK, 1))
+        gc.SetBrush(wx.Brush(wx.WHITE))
+        gc.DrawRectangle(0, height // 2 - 5, width, 10)
+
+        # Draw the highlighted ranges.
+        for start, end in self.highlights:
+            gc.SetPen(wx.Pen(wx.BLUE, 1))
+            gc.SetBrush(wx.Brush(wx.BLUE))
+            start_pos = width * start
+            end_pos = width * end
+            gc.DrawRectangle(start_pos, height // 2 - 5, end_pos - start_pos, 10)
+
+        # Draw the thumb at the new position.
+        thumb_pos = width * self.thumb_position
+        gc.SetPen(wx.Pen(wx.BLACK, 1))
+        gc.SetBrush(wx.Brush(wx.GREEN))
+        gc.DrawRectangle(thumb_pos - 5, height // 2 - 5, 10, 10)
 
 
-@app.route("/play_video/<play_filename>")
-def video(play_filename):
-    """
-    Returns video player view/template with specified video
-    :param play_filename: Filename/video to play
-    :return: Rendered template of video player
-    """
-    if utils.filename_exists_in_userdata(play_filename):
-        global filename
-        filename = play_filename
-        return render_template("player.html", filename=filename, video_data=utils.get_video_data(filename))
-    return redirect("/")
+class TextPanel(wx.Panel):
+    def __init__(self, parent):
+        super(TextPanel, self).__init__(parent)
+        self.text_ctrl = wx.TextCtrl(self, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_NO_VSCROLL)
+
+        logging.debug("Initializing text panel")
+        # Layout.
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.text_ctrl, 1, wx.EXPAND | wx.ALL, border=0)
+        self.SetSizer(sizer)
+
+    def update_text(self, text):
+        self.text_ctrl.SetValue(text)
 
 
-@app.route("/delete_video/<delete_filename>")
-def delete_video(delete_filename):
-    """
-    Deletes a video from the userdata
-    :param delete_filename: Filename/video to delete
-    :return: Redirect to home page
-    """
-    if utils.filename_exists_in_userdata(delete_filename):
-        utils.delete_video_from_userdata(delete_filename)
-    return redirect("/")
-
-
-@app.route("/update_settings", methods=['GET', 'POST'])
-def update_settings():
-    if request.method == "POST":
-        new_values = utils.extract_form_values(request)
-        utils.update_configuration(new_values)
-        return redirect('/settings')
-    current_settings = utils.get_current_settings()
-    return render_template('settings.html', current_settings=current_settings)
-
-
-@app.route('/reset-settings', methods=['POST'])
-def reset_settings():
-    print("Current working directory:", os.getcwd())
-    # Delete the existing config.ini file
-    if os.path.exists('config.ini'):
-        os.remove('config.ini')
-    shutil.copy('config.example.ini', 'config.ini')
-    current_settings = utils.get_current_settings()
-    return render_template('settings.html', current_settings=current_settings)
-
-
-@app.route('/update_tesseract_path', methods=['GET', 'POST'])
-def update_tesseract_path():
-    global cancel_search_flag
-
-    if request.method == 'POST' and request.form.get('cancel_search'):
-        # Set the flag to indicate cancellation
-        cancel_search_flag = True
-        message = 'Tesseract search canceled.'
-        current_settings = utils.get_current_settings()
-        return render_template('settings.html', current_settings=current_settings, message=message)
-
-    current_settings = utils.get_current_settings()
-    if current_settings['AppSettings']['tesseract_executable'] == 'your_path_to_tesseract_here' \
-            or current_settings['AppSettings']['tesseract_executable'] == '':
-        file_pattern = 'tesseract.exe'
-        for drive in range(65, 91):  # Drive letters 'A' to 'Z'
-            drive_letter = chr(drive) + ':\\'
-            if os.path.exists(drive_letter):
-                for root, dirs, files in os.walk(drive_letter):
-                    if cancel_search_flag:  # Check the cancellation flag
-                        message = 'Tesseract search canceled.'
-                        cancel_search_flag = False  # Reset the flag
-                        return render_template('settings.html', current_settings=current_settings, message=message)
-
-                    for file in glob.glob(os.path.join(root, file_pattern)):
-                        file_path = file
-                        utils.update_configuration({'AppSettings': {'tesseract_executable': file_path}})
-                        message = 'Tesseract executable found and path updated successfully.'
-                        current_settings = utils.get_current_settings()
-                        return render_template('settings.html', current_settings=current_settings, message=message)
-
-    message = 'Could not find tesseract executable. Please enter the path manually.'
-    return render_template('settings.html', current_settings=current_settings, message=message)
-
-
-if __name__ == "__main__":
-    host = "localhost"
-    port = 5000
-    logging.basicConfig(filename="app.log", filemode="w", level=logging.DEBUG, format="%(levelname)s - %(message)s")
-    print("[*] Starting OcrRoo Server")
-    print(f"[*] OcrRoo Server running on http://{host}:{port}/")
-    app.run(host=host, port=port)
-else:
-    logging.basicConfig(level=logging.DEBUG, format="%(levelname)s - %(message)s")
+if __name__ == '__main__':
+    app = wx.App()
+    video_player = VideoPlayerFrame(title='OcrRoo')
+    video_player.Show(True)
+    app.MainLoop()

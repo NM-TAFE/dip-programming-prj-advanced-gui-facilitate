@@ -23,10 +23,10 @@ Your journal entry should contain the following (you can use Obsedian if you lik
 
 #### Evidence
 Mark all that applied this week
-- [] Attended class
-- [] Responded to PRs/Issues
-- [] Met with the team online. Forum ______
-- [] Commits to group repo
+- [ ] Attended class
+- [ ] Responded to PRs/Issues
+- [ ] Met with the team online. Forum ______
+- [ ] Commits to group repo
 
 > :warning: If you were not able to mark any of these on a particular week, please email your lecturer with the reason.
 

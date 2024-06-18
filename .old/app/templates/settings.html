@@ -1,0 +1,222 @@
+{% extends "new-base.html" %}
+{% set title = "Settings" %}
+{% block content %}
+    <section class="w-1/2 my-8 mx-auto">
+        <h1 class="text-6xl font-bold pb-8 text-center text-transparent bg-clip-text caret-pink-600
+                bg-gradient-to-tr from-indigo-500 via-fuchsia-400 to-purple-400"><i class="fa-solid fa-gear mr-4">
+        </i>Settings</h1>
+        <div id="alert-message"></div>
+        {% if current_settings.AppSettings.tesseract_executable == 'your_path_to_tesseract_here'
+        or current_settings.AppSettings.tesseract_executable == '' %}
+       <div class="flex flex-col">
+            <h2 id="search-tesseract" class="text-2xl mb-8 text-red-500"></h2>
+            <button id="cancel-search" class="hidden w-1/6 mb-3 bg-red-500 hover:bg-red-300 text-white hover:text-red-500 px-2 py-1 rounded-md">Cancel</button>
+        </div>        {% endif %}
+        {% if message %}
+            <div id="finding-tesseract" class="hidden">{{ message }}</div>
+        {% endif %}
+        <form method="POST" action="/update_settings" id="updateForm">
+            <div class="mb-8">
+                <h2 class="text-2xl">User Account</h2>
+                <hr class="my-2">
+
+                <div>
+                    <label for="username" class="block font-medium text-gray-700">Username</label>
+                    {% if current_settings.UserSettings.username and current_settings.UserSettings.username != "None" %}
+                        <input type="text" id="username" name="username"
+                               value="{{ current_settings.UserSettings.username }}"
+                               placeholder="Create a unique username."
+                               class="mt-1 p-1 w-full rounded-md border-gray-200 border shadow-sm"/>
+                    {% else %}
+                        <input type="text" id="username" name="username" placeholder="Create a unique username."
+                               class="mt-1 p-1 w-full rounded-md border-gray-200 border shadow-sm"/>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="mb-8">
+                <h2 class="text-2xl">Integrations & API</h2>
+                <hr class="my-2">
+                <div>
+                    <label for="openAiApiKey" class="block font-medium text-gray-700">OpenAI API Key</label>
+                    {% if current_settings.AppSettings.openai_api_key and current_settings.AppSettings.openai_api_key != "your_openai_api_key_here" %}
+                        <input type="password" id="openAiApiKey" name="openai_api_key"
+                               placeholder="Enter your API key here."
+                               value="{{ current_settings.AppSettings.openai_api_key }}"
+                               class="mt-1 p-1 w-full rounded-md border-gray-200 border shadow-sm"/>
+                    {% else %}
+                        <input type="text" id="openAiApiKey" name="openai_api_key"
+                               placeholder="Enter your API key here."
+                               class="mt-1 p-1 w-full rounded-md border-gray-200 border shadow-sm"/>
+                    {% endif %}
+                </div>
+
+                <div class="mb-8">
+                    <h2 class="text-2xl">Preferences</h2>
+                    <hr class="my-2">
+                    <div>
+                        <label for="programmingLanguage" class="block font-medium text-gray-700">Programming
+                            Language</label>
+                        <input type="text" id="programmingLanguage" name="programming_language"
+                               value="{{ current_settings.UserSettings.programming_language }}" placeholder="Python"
+                               class="mt-1 p-1 w-full rounded-md border-gray-200 border shadow-sm"/>
+                    </div>
+                    <div>
+                        <label for="outputPath" class="block font-medium text-gray-700">Capture Output Path</label>
+                        {% if current_settings.UserSettings.output_path and current_settings.UserSettings.output_path != "output_path" %}
+                            <input type="text" id="outputPath" name="output_path"
+                                   value="{{ current_settings.UserSettings.output_path }}"
+                                   placeholder="Enter your output path"
+                                   class="mt-1 p-1 w-full rounded-md border-gray-200 border shadow-sm"/>
+                        {% else %}
+                            <input type="text" id="outputPath" name="output_path"
+                                   placeholder="Enter your output path"
+                                   class="mt-1 p-1 w-full rounded-md border-gray-200 border shadow-sm"/>
+                        {% endif %}
+                    </div>
+                    <div>
+                      <label for="videoSavePath" class="block font-medium text-gray-700">Video Save Path</label>
+                      <input type="text" id="videoSavePath" placeholder="..\out\videos\"
+                             class="mt-1 p-1 w-full rounded-md border-gray-200 border shadow-sm"/>
+                    </div>
+                    <div class="mt-2">
+                        <label for="uiSFX" class="block font-medium text-gray-700">UI Sound Effects</label>
+                        <select name="mute_ui_sounds" id="uiSFX" class="mt-1 p-1 w-full rounded-md border-gray-200
+                          border bg-white shadow-sm">
+                            <option value="False"
+                                    {% if current_settings.UserSettings.mute_ui_sounds == 'False' %}selected{% endif %}>
+                                Disabled
+                            </option>
+                            <option value="True"
+                                    {% if current_settings.UserSettings.mute_ui_sounds == 'True' %}selected{% endif %}>
+                                Enabled
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <label for="idePath" class="block font-medium text-gray-700">Path to Preferred IDE
+                        Executable</label>
+                    {% if current_settings.AppSettings.ide_executable and current_settings.AppSettings.ide_executable != "your_path_to_ide_here" %}
+                        <input type="text" id="idePath" name="ide_executable"
+                               value="{{ current_settings.AppSettings.ide_executable }}"
+                               placeholder="C:\Program Files\JetBrains\PyCharm\bin\pycharm64.exe"
+                               class="mt-1 p-1 w-full rounded-md border-gray-200 border shadow-sm"/>
+                    {% else %}
+                        <input type="text" id="idePath" name="ide_executable"
+                               placeholder="C:\Program Files\JetBrains\PyCharm\bin\pycharm64.exe"
+                               class="mt-1 p-1 w-full rounded-md border-gray-200 border shadow-sm"/>
+                    {% endif %}
+                </div>
+                <div class="mt-2">
+                    <label for="tesseractPath" class="block font-medium text-gray-700">Path to Tesseract Executable</label>
+                    {% if current_settings.AppSettings.tesseract_executable and current_settings.AppSettings.tesseract_executable != "your_path_to_tesseract_here" %}
+                        <input type="text" id="tesseractPath" name="tesseract_executable"
+                               value="{{ current_settings.AppSettings.tesseract_executable }}"
+                               placeholder="C:\Program Files\Tesseract-OCR\tesseract.exe"
+                               class="mt-1 p-1 w-full rounded-md border-gray-200 border shadow-sm"/>
+                    {% else %}
+                        <input type="text" id="tesseractPath" name="tesseract_executable"
+                               placeholder="C:\Program Files\Tesseract-OCR\tesseract.exe"
+                               class="mt-1 p-1 w-full rounded-md border-gray-200 border shadow-sm"/>
+                    {% endif %}
+                </div>
+            </div>
+
+
+            <div class="mb-8">
+                <h2 class="text-2xl">Key Bindings</h2>
+                <hr class="my-2">
+                <table class="w-full border-collapse">
+                    <tr>
+                        <th class="text-left pb-2">Action</th>
+                        <th class="text-left w-full pb-2">Binding</th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <td class="whitespace-nowrap pr-4 pb-2">Play/Pause Video</td>
+                        <td class="pb-2"><p class="bg-white p-1 border border-gray-200 rounded-md shadow-sm">ShiftLeft +
+                            KeyA</p></td>
+                        <td class="whitespace-nowrap pl-2 pb-2">
+                            <button class="bg-white p-1 border border-gray-200 rounded-md shadow-sm">Edit Binding
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="whitespace-nowrap pr-4 pb-2">Play/Pause Video</td>
+                        <td class="pb-2"><p class="bg-white p-1 border border-gray-200 rounded-md shadow-sm">ShiftLeft +
+                            KeyA</p></td>
+                        <td class="whitespace-nowrap pl-2 pb-2">
+                            <button class="bg-white p-1 border border-gray-200 rounded-md shadow-sm">Edit Binding
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="whitespace-nowrap pr-4 pb-2">Play/Pause Video</td>
+                        <td class="pb-2"><p class="bg-white p-1 border border-gray-200 rounded-md shadow-sm">ShiftLeft +
+                            KeyA</p></td>
+                        <td class="whitespace-nowrap pl-2 pb-2">
+                            <button class="bg-white p-1 border border-gray-200 rounded-md shadow-sm">Edit Binding
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="mb-8">
+                <h2 class="text-2xl">Additional Features</h2>
+                <hr class="my-2">
+                <div>
+                    <label for="youtubeDL" class="block font-medium text-gray-700">YouTube Downloader</label>
+                    <select name="use_youtube_downloader" id="youtubeDL"
+                            class="mt-1 p-1 w-full rounded-md border-gray-200 border bg-white shadow-sm">
+                        <option value="False"
+                                {% if current_settings.Features.use_youtube_downloader == 'False' %}selected{% endif %}>
+                            Disabled
+                        </option>
+                        <option value="True"
+                                {% if current_settings.Features.use_youtube_downloader == 'True' %}selected{% endif %}
+                        >Enabled
+                        </option>
+                    </select>
+                    <p class="mt-2 text-gray-500 font-bold text-sm">Disclaimer</p>
+                    <p class="text-xs text-gray-400 italic">I would like to emphasize that downloading videos directly
+                        from
+                        YouTube
+                        could potentially violate the
+                        terms of service of YouTube. I do not endorse or support the unauthorized downloading of
+                        videos from media streaming websites. This software is created and intended solely for
+                        educational
+                        purposes, and I will not be held accountable for any breaches of terms of service or copyright
+                        infringements that may occur. By enabling this feature, you agree to release me in any event of
+                        copyright
+                        or terms of service breaches.
+                    </p>
+                </div>
+            </div>
+        </form>
+        <div class="flex space-x-3">
+            <div class="mb-8">
+                <button id="saveButton" class="bg-white p-1 border border-gray-200 rounded-md shadow-sm"
+                        aria-label="Save Settings">Save
+                    Settings
+                </button>
+            </div>
+            <div>
+                <form action="/reset-settings" method="POST" id="resetSettings">
+                    <button id="reset-settings" class="bg-white p-1 border border-gray-200 rounded-md shadow-sm"
+                            aria-label="Reset Settings">Reset Settings
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+    <script>
+        document.getElementById("saveButton").onclick = function () {
+            document.getElementById("updateForm").submit();
+        };
+        document.getElementById('reset-settings').onclick = function () {
+            if (confirm("Are you sure you want to reset the settings? This cannot be undone.")) {
+                document.getElementById('resetSettings')
+            }
+        }
+    </script>
+{% endblock %}
