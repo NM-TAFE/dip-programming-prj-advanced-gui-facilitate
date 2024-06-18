@@ -149,6 +149,18 @@ class VideoTextExtractor:
         segments (list): A list of segments.
         output_path (str): The path to the output JSON file.
         """
+        self.combine_segments(segments)
+        with open(self.output_json_path, 'w') as f:
+            json.dump(segments, f, indent=4)
+
+    def combine_segments(self, segments):
+        """
+        Combine segments that are close to each other and contain the same
+        content.
+
+        Parameters:
+        segments (list): A list of segments.
+        """
         i = 0
         # Combine segments that are close to each other
         while i < len(segments) - 1:
@@ -157,23 +169,25 @@ class VideoTextExtractor:
             if current_segment["text_present"] and next_segment["text_present"]:
                 # Check if CURRENT segment's text is in the NEXT segment
                 ratio_full = fuzz.ratio(current_segment["extracted_text"], next_segment["extracted_text"])
-                ratio_within = fuzz.ratio(next_segment["extracted_text"], current_segment["extracted_text"])  # Check reverse containment
+                ratio_within = fuzz.ratio(next_segment["extracted_text"],
+                                          current_segment["extracted_text"])  # Check reverse containment
                 is_within = current_segment["extracted_text"] in next_segment["extracted_text"]
 
-                if ratio_full >= 70 or ratio_within >= 80 or is_within: # Adjust thresholds if needed (decrease for more leniance)
-                    # Combine segments 
+                if ratio_full >= 70 or ratio_within >= 80 or is_within:  # Adjust thresholds if needed (decrease for more lenience)
+                    # Combine segments
                     current_segment["end_frame"] = next_segment["end_frame"]
                     current_segment["end_time"] = next_segment["end_time"]
                     current_segment["extracted_text"] = next_segment["extracted_text"]  # Take the complete text
                     del segments[i + 1]
                 else:
                     i += 1
+            elif not current_segment["text_present"] and not next_segment["text_present"]:
+                current_segment["end_frame"] = next_segment["end_frame"]
+                current_segment["end_time"] = next_segment["end_time"]
+                del segments[i + 1]
             else:
                 i += 1
 
-        with open(self.output_json_path, 'w') as f:
-            json.dump(segments, f, indent=4)
-            
     def process_video(self):
         """
         Do the full video processing pipeline.
