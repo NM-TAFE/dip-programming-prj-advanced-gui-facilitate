@@ -4,6 +4,7 @@ import json
 from tqdm import tqdm
 from fuzzywuzzy import fuzz
 
+
 class VideoTextExtractor:
     def __init__(self, video_path, output_json_path, difference_threshold=100, frame_diff_threshold=2000, threshold_value=100):
         self.video_path = video_path
@@ -15,7 +16,6 @@ class VideoTextExtractor:
         # Load App Json Config
         app_config = self.load_app_json_config()
         pytesseract.pytesseract.tesseract_cmd = app_config['config']['tessaractPath']
-
 
     def frame_difference(self, frame1, frame2):
         """
@@ -32,7 +32,6 @@ class VideoTextExtractor:
         gray_diff = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
         _, binary_diff = cv2.threshold(gray_diff, self.threshold_value, 255, cv2.THRESH_BINARY)
         return cv2.sumElems(binary_diff)[0]
-
 
     def extract_text(self, frame):
         """
@@ -62,7 +61,11 @@ class VideoTextExtractor:
         list: A list of segments.
         """
         video = cv2.VideoCapture(self.video_path)
+        if not video.isOpened():
+            print("Error opening video file")
+            exit()
         frame_count = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+        print(f"Reported frame count by OpenCV: {frame_count}")
         fps = video.get(cv2.CAP_PROP_FPS)
         frame_skip = int(fps / 2)  # Process two frames per second
         segments = []
@@ -149,6 +152,18 @@ class VideoTextExtractor:
         segments (list): A list of segments.
         output_path (str): The path to the output JSON file.
         """
+        self.combine_segments(segments)
+        with open(self.output_json_path, 'w') as f:
+            json.dump(segments, f, indent=4)
+
+    def combine_segments(self, segments):
+        """
+        Combine segments that are close to each other and contain the same
+        content.
+
+        Parameters:
+        segments (list): A list of segments.
+        """
         i = 0
         # Combine segments that are close to each other
         while i < len(segments) - 1:
@@ -157,23 +172,25 @@ class VideoTextExtractor:
             if current_segment["text_present"] and next_segment["text_present"]:
                 # Check if CURRENT segment's text is in the NEXT segment
                 ratio_full = fuzz.ratio(current_segment["extracted_text"], next_segment["extracted_text"])
-                ratio_within = fuzz.ratio(next_segment["extracted_text"], current_segment["extracted_text"])  # Check reverse containment
+                ratio_within = fuzz.ratio(next_segment["extracted_text"],
+                                          current_segment["extracted_text"])  # Check reverse containment
                 is_within = current_segment["extracted_text"] in next_segment["extracted_text"]
 
-                if ratio_full >= 70 or ratio_within >= 80 or is_within: # Adjust thresholds if needed (decrease for more leniance)
-                    # Combine segments 
+                if ratio_full >= 70 or ratio_within >= 80 or is_within:  # Adjust thresholds if needed (decrease for more lenience)
+                    # Combine segments
                     current_segment["end_frame"] = next_segment["end_frame"]
                     current_segment["end_time"] = next_segment["end_time"]
                     current_segment["extracted_text"] = next_segment["extracted_text"]  # Take the complete text
                     del segments[i + 1]
                 else:
                     i += 1
+            elif not current_segment["text_present"] and not next_segment["text_present"]:
+                current_segment["end_frame"] = next_segment["end_frame"]
+                current_segment["end_time"] = next_segment["end_time"]
+                del segments[i + 1]
             else:
                 i += 1
 
-        with open(self.output_json_path, 'w') as f:
-            json.dump(segments, f, indent=4)
-            
     def process_video(self):
         """
         Do the full video processing pipeline.
@@ -202,8 +219,8 @@ class VideoTextExtractor:
 if __name__ == "__main__":
     # Example usage
     extractor = VideoTextExtractor(
-        video_path = "C:/Users/bishi/OneDrive/Desktop/test2 - 1716891852652.mp4",
-        output_json_path = 'text_segments3.json',
+        video_path = "C:/Users/winro/Downloads/1.mp4",
+        output_json_path = 'C:/Users/winro/Downloads/text_segments3.json',
         difference_threshold = 100,  # Increase for less sensitivity in text detection
         frame_diff_threshold = 2000, # Increase for less sensitivity in frame differencing
         threshold_value = 100  # Increasing makes it less sensitive to frame differences
