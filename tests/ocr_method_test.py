@@ -4,7 +4,14 @@ from app.ocr_method import VideoTextExtractor
 
 
 class CombineSegmentsTestCase(unittest.TestCase):
+    """
+    Test cases for the combine_segments method of the VideoTextExtractor class.
+    """
     def setUp(self):
+        """
+        Set up the test environment by initializing a VideoTextExtractor instance
+        and providing a list of segments for testing.
+        """
         self.text_extractor = VideoTextExtractor("example/test2 - 1716891852652.mp4",
                                                  "test.json")
         self.segments = [
@@ -51,6 +58,9 @@ class CombineSegmentsTestCase(unittest.TestCase):
         ]
 
     def test_combine_segments_combines_segments_with_same_text(self):
+        """
+        Test that combine_segments correctly combines segments with the same extracted text.
+        """
         self.text_extractor.combine_segments(self.segments)
         combined_segment = self.segments[-1]
 
@@ -58,6 +68,9 @@ class CombineSegmentsTestCase(unittest.TestCase):
         self.assertEqual(510, combined_segment["end_frame"])
 
     def test_combine_segments_combines_segments_without_text(self):
+        """
+        Test that combine_segments correctly combines segments without extracted text.
+        """
         self.text_extractor.combine_segments(self.segments)
         combined_segment = self.segments[0]
 
@@ -65,6 +78,9 @@ class CombineSegmentsTestCase(unittest.TestCase):
         self.assertEqual(30, combined_segment["end_frame"])
 
     def test_combine_segments_does_not_combine_unrelated_segments(self):
+        """
+        Test that combine_segments does not combine unrelated segments with different extracted text.
+        """
         self.text_extractor.combine_segments(self.segments)
         unchanged_segment = self.segments[1]
         self.assertEqual(30, unchanged_segment["start_frame"])
