@@ -14,8 +14,8 @@ class VideoTextExtractor:
         self.threshold_value = threshold_value
 
         # Load App Json Config
-        app_config = self.load_app_json_config()
-        pytesseract.pytesseract.tesseract_cmd = app_config['config']['tessaractPath']
+        self.app_config = self.load_app_json_config()
+        pytesseract.pytesseract.tesseract_cmd = self.app_config['config']['tessaractPath']
 
     def frame_difference(self, frame1, frame2):
         """
@@ -172,8 +172,7 @@ class VideoTextExtractor:
             if current_segment["text_present"] and next_segment["text_present"]:
                 # Check if CURRENT segment's text is in the NEXT segment
                 ratio_full = fuzz.ratio(current_segment["extracted_text"], next_segment["extracted_text"])
-                ratio_within = fuzz.ratio(next_segment["extracted_text"],
-                                          current_segment["extracted_text"])  # Check reverse containment
+                ratio_within = fuzz.ratio(next_segment["extracted_text"],current_segment["extracted_text"])  # Check reverse containment
                 is_within = current_segment["extracted_text"] in next_segment["extracted_text"]
 
                 if ratio_full >= 70 or ratio_within >= 80 or is_within:  # Adjust thresholds if needed (decrease for more lenience)

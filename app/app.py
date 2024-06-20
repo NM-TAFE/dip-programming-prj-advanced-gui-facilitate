@@ -1,4 +1,5 @@
 import wx
+import pyttsx3
 import wx.media
 import logging
 from typing import Callable
@@ -8,6 +9,12 @@ import json
 class VideoPlayerFrame(wx.Frame):
     """
     The parent for everything in the wx user interface.
+
+
+    This class creates and arranges the following UI components:
+        * Video player panel (`VideoPlayer`)
+        * Text panel to display extracted code (`TextPanel`)
+        * Menu bar with options for opening files and quitting.
     """
 
     def __init__(self, title):
@@ -41,6 +48,11 @@ class VideoPlayerFrame(wx.Frame):
         """
         This function is called when a key is pressed.
         Its primary purpose is to check for keyboard shortcuts being pressed.
+            * Ctrl+O - Open file dialog
+            * Ctrl+Q - Quit application
+            * Space - Play/Pause video
+            * Arrow keys - Skip video playback (Left: rewind, Right: forward)
+            * Up/Down arrows - Adjust volume (Up: increase, Down: decrease)
         """
         keycode = event.GetKeyCode()
         if event.ControlDown():  # Ctrl
@@ -61,9 +73,15 @@ class VideoPlayerFrame(wx.Frame):
         event.Skip()
 
     def on_quit(self, event=None):
+        """
+        Closes the application window.
+        """
         self.Close()
 
     def on_shortcut_dialog(self, event=None):
+        """
+        Displays a dialog window listing available keyboard shortcuts.
+        """
         about_dialog = ShortcutDialog(self)
         about_dialog.ShowModal()
 
@@ -73,6 +91,12 @@ class MenuBar(wx.MenuBar):
         super(MenuBar, self).__init__()
 
     def create_media_menu(self, open_func: Callable, quit_func: Callable):
+        """
+        Creates the "Media" menu with options to open video files and quit the application.
+
+        :param open_func: Function reference for opening video files (usually `VideoPlayer.open_file`).
+        :param quit_func: Function reference for quitting the application (usually `VideoPlayerFrame.on_quit
+        """
         media_menu = wx.Menu()
         open_file_item = media_menu.Append(wx.ID_ANY, 'Open File\tCtrl-O')
         self.Bind(wx.EVT_MENU, open_func, open_file_item)
@@ -207,6 +231,13 @@ class VideoPlayer(wx.Panel):
             self.text_panel.update_text("")  # Clear text if no match
             
 class HighlightTimeline(wx.Panel):
+    """
+    A custom panel to represent the video timeline with highlights.
+
+    This class draws a timeline along with highlighted ranges that correspond
+    to specific segments in the video. It also displays a movable thumb
+    indicating the current playback position within the video.
+    """
     def __init__(self, parent):
         super().__init__(parent, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TAB_TRAVERSAL)
         self.highlights = []  # Highlight ranges
@@ -216,14 +247,32 @@ class HighlightTimeline(wx.Panel):
         logging.debug("Initializing highlight timeline")
 
     def add_highlight_range(self, start: float, end: float):
+        """
+        Adds a new highlight range to the timeline.
+
+        Args:
+            start (float): The start time of the highlight relative to the video duration (0.0 to 1.0).
+            end (float): The end time of the highlight relative to the video duration (0.0 to 1.0).
+        """
         self.highlights.append((start, end))
         self.Refresh()
 
     def set_thumb_position(self, value):
+        """
+        Sets the position of the thumb indicator on the timeline.
+
+        Args:
+            value (float): The new position of the thumb relative to the video duration (0.0 to 1.0).
+        """
         self.thumb_position = value
         self.Refresh()
 
     def on_paint(self, event):
+        """
+        Handles the paint event to draw the timeline, highlights, and thumb indicator.
+
+        This method is called whenever the panel needs to be redrawn.
+        """
         dc = wx.BufferedPaintDC(self)
         gc = wx.GraphicsContext.Create(dc)
         width, height = self.GetClientSize()
@@ -249,9 +298,18 @@ class HighlightTimeline(wx.Panel):
 
 
 class TextPanel(wx.Panel):
+    """
+    A panel to display extracted text content.
+
+    This class creates a read-only multiline text control to display the
+    extracted text content from the video.
+    """
     def __init__(self, parent):
         super(TextPanel, self).__init__(parent)
         self.text_ctrl = wx.TextCtrl(self, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_NO_VSCROLL)
+
+        # Initialize text-to-speech engine
+        self.engine = pyttsx3.init()
 
         logging.debug("Initializing text panel")
         # Layout.
@@ -260,7 +318,24 @@ class TextPanel(wx.Panel):
         self.SetSizer(sizer)
 
     def update_text(self, text):
+        """
+        Updates the displayed text content in the panel and speaks the text.
+
+        Args:
+            text (str): The new text content to be displayed and spoken
+        """
         self.text_ctrl.SetValue(text)
+        self.speak_text(text)
+
+    def speak_text(self, text):
+        """
+        Speaks the given text using text-to-speech engine.
+
+        Args:
+            text (str): The text to be spoken.
+        """
+        self.engine.say(text)
+        self.engine.runAndWait()
 
 
 if __name__ == '__main__':
