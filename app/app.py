@@ -1,4 +1,5 @@
 import wx
+import pyttsx3
 import wx.media
 import logging
 from typing import Callable
@@ -307,6 +308,9 @@ class TextPanel(wx.Panel):
         super(TextPanel, self).__init__(parent)
         self.text_ctrl = wx.TextCtrl(self, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_NO_VSCROLL)
 
+        # Initialize text-to-speech engine
+        self.engine = pyttsx3.init()
+
         logging.debug("Initializing text panel")
         # Layout.
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -315,12 +319,23 @@ class TextPanel(wx.Panel):
 
     def update_text(self, text):
         """
-        Updates the displayed text content in the panel.
+        Updates the displayed text content in the panel and speaks the text.
 
         Args:
-            text (str): The new text content to be displayed.
+            text (str): The new text content to be displayed and spoken
         """
         self.text_ctrl.SetValue(text)
+        self.speak_text(text)
+
+    def speak_text(self, text):
+        """
+        Speaks the given text using text-to-speech engine.
+
+        Args:
+            text (str): The text to be spoken.
+        """
+        self.engine.say(text)
+        self.engine.runAndWait()
 
 
 if __name__ == '__main__':
